@@ -1,5 +1,7 @@
 # Tetranucleo
 
+[![Join the chat at https://gitter.im/Ecole-des-collegues/Tetranucleo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ecole-des-collegues/Tetranucleo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Programme Java. Fonction de croisse des codes circulaires de tétranucléotides autocomplémentaires.
 
 ## Steps
