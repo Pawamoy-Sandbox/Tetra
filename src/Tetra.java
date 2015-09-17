@@ -7,8 +7,7 @@ import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class Tetra
 {
@@ -30,7 +29,9 @@ public class Tetra
         System.out.println("tetra: " + tetra1 + "\tcompl:" + compl(tetra1) + "\tAutoCompl: " + isAutoCompl(tetra1));
         System.out.println("tetra: " + tetra2 + "\tcompl:" + compl(tetra2) + "\tAutoCompl: " + isAutoCompl(tetra2));
 
+
         tetraToGraphExample();
+        bitSetExample();
     }
 
 
@@ -97,5 +98,38 @@ public class Tetra
     public static boolean isAutoCompl(String tetra)
     {
         return tetra.equals(compl(tetra));
+    }
+
+    public static void bitSetExample() {
+
+        BitSet bytes = new BitSet();
+
+        bytes.set(3);
+        bytes.set(7);
+        bytes.set(1);
+        bytes.set(0);
+        bytes.set(11);
+        bytes.set(11);
+        bytes.set(1000);
+
+        System.out.println("Set: " + bytes); // {0, 1, 3, 7, 11, 1000}
+        System.out.println("Set cardinality: " + bytes.cardinality()); // 4
+        System.out.println("Is 10 in the set? " + bytes.get(10)); // false
+        System.out.println("Iterating on set: ");
+        for (int i = -1; (i = bytes.nextSetBit(i + 1)) != -1; ) {
+            byte b = (byte) i;
+            System.out.print(b + " ");
+        }
+        System.out.println();
+
+        BitSet bytes2 = new BitSet();
+        bytes2.set(0, 4);
+
+        bytes.and(bytes2); // intersection
+//        bytes.andNot(bytes2); // subtraction
+//        bytes.or(bytes2); // addition
+        System.out.println("Set1: " + bytes);
+        System.out.println("Set2: " + bytes2);
+        System.out.println("Intersects: " + bytes.intersects(bytes2));
     }
 }
