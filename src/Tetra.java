@@ -70,7 +70,7 @@ public class Tetra
             System.out.println("cycle detected. Aborting");
 
         }
-    }
+    }                                                                                                                                                                                                                                                                                                                          
 
     public static String compl(String tetra)
     {
