@@ -30,7 +30,59 @@ public class Tetra
         System.out.println("tetra: " + tetra1 + "\tcompl:" + Compl(tetra1) + "\tAutoCompl: " + IsAutoCompl(tetra1));
         System.out.println("tetra: " + tetra2 + "\tcompl:" + Compl(tetra2) + "\tAutoCompl: " + IsAutoCompl(tetra2));
 
+        CycleExample();
+        TetraToGraphExample();
+    }
 
+    public static void TetraToGraphExample()
+    {
+        DirectedGraph<String, DefaultEdge> g =
+                new DefaultDirectedGraph<String, DefaultEdge>
+                        (DefaultEdge.class);
+
+        String tetra1 = "ACGT";
+        String tetra2 = "CGTA";
+
+        for (int i = 0; i < 3; i++)
+        {
+            String firstElement = tetra1.substring(0, i+1);
+            String secondElement = tetra1.substring(i+1);
+
+            g.addVertex(firstElement);
+            g.addVertex(secondElement);
+
+            g.addEdge(firstElement, secondElement);
+        }
+
+
+        for (int i = 0; i < 3; i++)
+        {
+            String firstElement = tetra2.substring(0, i+1);
+            String secondElement = tetra2.substring(i + 1);
+
+            g.addVertex(firstElement);
+            g.addVertex(secondElement);
+
+            g.addEdge(firstElement, secondElement);
+        }
+
+
+        System.out.println(g.toString());
+
+
+        // Are there cycles in the dependencies.
+        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
+        // Cycle(s) detected.
+        if (cycleDetector.detectCycles()) {
+            System.out.println("cycle detected. Aborting");
+
+        }
+
+
+    }
+
+    public static void CycleExample()
+    {
         DirectedGraph<String, DefaultEdge> g =
                 new DefaultDirectedGraph<String, DefaultEdge>
                         (DefaultEdge.class);
@@ -46,7 +98,7 @@ public class Tetra
         g.addVertex("CG");
         g.addVertex("TA");
 
-
+        //cycle
         g.addEdge("A", "CGT");
         g.addEdge("CGT", "A");
 
@@ -60,33 +112,8 @@ public class Tetra
         CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
         // Cycle(s) detected.
         if (cycleDetector.detectCycles()) {
-            Iterator<String> iterator;
-            Set<String> cycleVertices;
-            Set<String> subCycle;
-            String cycle;
+            System.out.println("cycle detected. Aborting");
 
-            System.out.println("Cycles detected.");
-
-            // Get all vertices involved in cycles.
-            cycleVertices = cycleDetector.findCycles();
-
-            // Loop through vertices trying to find disjoint cycles.
-            while (! cycleVertices.isEmpty()) {
-                System.out.println("Cycle:");
-
-                // Get a vertex involved in a cycle.
-                iterator = cycleVertices.iterator();
-                cycle = iterator.next();
-
-                // Get all vertices involved with this vertex.
-                subCycle = cycleDetector.findCyclesContainingVertex(cycle);
-                for (String sub : subCycle) {
-                    System.out.println("   " + sub);
-                    // Remove vertex so that this cycle is not encountered
-                    // again.
-                    cycleVertices.remove(sub);
-                }
-            }
         }
 
         // No cycles.  Just output properly ordered vertices.
@@ -102,7 +129,6 @@ public class Tetra
                 System.out.println(v);
             }
         }
-
     }
 
     public static String Compl(String tetra)
