@@ -26,15 +26,30 @@ public class Tetra
         String tetra1 = "ACGT";
         String tetra2 = "CGCT";
 
-        System.out.println("tetra: " + tetra1 + "\tcompl:" + Compl(tetra1) + "\tAutoCompl: " + IsAutoCompl(tetra1));
-        System.out.println("tetra: " + tetra2 + "\tcompl:" + Compl(tetra2) + "\tAutoCompl: " + IsAutoCompl(tetra2));
+        System.out.println("tetra: " + tetra1 + "\tcompl:" + compl(tetra1) + "\tAutoCompl: " + isAutoCompl(tetra1));
+        System.out.println("tetra: " + tetra2 + "\tcompl:" + compl(tetra2) + "\tAutoCompl: " + isAutoCompl(tetra2));
 
-        CycleExample();
-        TetraToGraphExample();
-        SortedSetExample();
+
+        tetraToGraphExample();
+        bitSetExample();
     }
 
-    public static void TetraToGraphExample()
+
+    public static void addTetraToGraph(String tetra, DirectedGraph g)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            String firstElement = tetra.substring(0, i+1);
+            String secondElement = tetra.substring(i+1);
+
+            g.addVertex(firstElement);
+            g.addVertex(secondElement);
+
+            g.addEdge(firstElement, secondElement);
+        }
+    }
+
+    public static void tetraToGraphExample()
     {
         DirectedGraph<String, DefaultEdge> g =
                 new DefaultDirectedGraph<String, DefaultEdge>
@@ -43,68 +58,9 @@ public class Tetra
         String tetra1 = "ACGT";
         String tetra2 = "CGTA";
 
-        for (int i = 0; i < 3; i++)
-        {
-            String firstElement = tetra1.substring(0, i+1);
-            String secondElement = tetra1.substring(i+1);
+        addTetraToGraph(tetra1, g);
+        addTetraToGraph(tetra2, g);
 
-            g.addVertex(firstElement);
-            g.addVertex(secondElement);
-
-            g.addEdge(firstElement, secondElement);
-        }
-
-
-        for (int i = 0; i < 3; i++)
-        {
-            String firstElement = tetra2.substring(0, i+1);
-            String secondElement = tetra2.substring(i + 1);
-
-            g.addVertex(firstElement);
-            g.addVertex(secondElement);
-
-            g.addEdge(firstElement, secondElement);
-        }
-
-
-        System.out.println(g.toString());
-
-
-        // Are there cycles in the dependencies.
-        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
-        // Cycle(s) detected.
-        if (cycleDetector.detectCycles()) {
-            System.out.println("cycle detected. Aborting");
-
-        }
-
-
-    }
-
-    public static void CycleExample()
-    {
-        DirectedGraph<String, DefaultEdge> g =
-                new DefaultDirectedGraph<String, DefaultEdge>
-                        (DefaultEdge.class);
-        g.addVertex("A");
-        g.addVertex("CGT");
-
-        g.addVertex("AC");
-        g.addVertex("GT");
-
-        g.addVertex("ACG");
-        g.addVertex("T");
-
-        g.addVertex("CG");
-        g.addVertex("TA");
-
-        //cycle
-        g.addEdge("A", "CGT");
-        g.addEdge("CGT", "A");
-
-        g.addEdge("AC", "GT");
-        g.addEdge("ACG", "T");
-        g.addEdge("CG", "TA");
 
         System.out.println(g.toString());
 
@@ -115,23 +71,9 @@ public class Tetra
             System.out.println("cycle detected. Aborting");
 
         }
-
-        // No cycles.  Just output properly ordered vertices.
-        else {
-            String v;
-            TopologicalOrderIterator<String, DefaultEdge> orderIterator;
-
-            orderIterator =
-                    new TopologicalOrderIterator<String, DefaultEdge>(g);
-            System.out.println("\nOrdering:");
-            while (orderIterator.hasNext()) {
-                v = orderIterator.next();
-                System.out.println(v);
-            }
-        }
     }
 
-    public static String Compl(String tetra)
+    public static String compl(String tetra)
     {
         StringBuilder res = new StringBuilder();
 
@@ -153,12 +95,12 @@ public class Tetra
         return res.toString();
     }
 
-    public static boolean IsAutoCompl(String tetra)
+    public static boolean isAutoCompl(String tetra)
     {
-        return tetra.equals(Compl(tetra));
+        return tetra.equals(compl(tetra));
     }
 
-    public static void SortedSetExample() {
+    public static void bitSetExample() {
 
         BitSet bytes = new BitSet();
 
