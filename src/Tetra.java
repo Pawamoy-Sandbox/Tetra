@@ -7,8 +7,7 @@ import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class Tetra
 {
@@ -32,6 +31,7 @@ public class Tetra
 
         CycleExample();
         TetraToGraphExample();
+        SortedSetExample();
     }
 
     public static void TetraToGraphExample()
@@ -156,5 +156,27 @@ public class Tetra
     public static boolean IsAutoCompl(String tetra)
     {
         return tetra.equals(Compl(tetra));
+    }
+
+    public static void SortedSetExample() {
+
+        BitSet bytes = new BitSet();
+
+        bytes.set(3);
+        bytes.set(7);
+        bytes.set(1);
+        bytes.set(0);
+        bytes.set(11);
+        bytes.set(11);
+        bytes.set(1000);
+
+        System.out.println("Set: " + bytes); // {3, 7, 11, 1000}
+        System.out.println("Set cardinality: " + bytes.cardinality()); // 4
+        System.out.println("Is 10 in the set? " + bytes.get(10)); // false
+        System.out.println("Iterating on set: ");
+        for (int i = -1; (i = bytes.nextSetBit(i + 1)) != -1; ) {
+            byte b = (byte) i;
+            System.out.println(b);
+        }
     }
 }
