@@ -112,13 +112,24 @@ public class Tetra
         bytes.set(11);
         bytes.set(1000);
 
-        System.out.println("Set: " + bytes); // {3, 7, 11, 1000}
+        System.out.println("Set: " + bytes); // {0, 1, 3, 7, 11, 1000}
         System.out.println("Set cardinality: " + bytes.cardinality()); // 4
         System.out.println("Is 10 in the set? " + bytes.get(10)); // false
         System.out.println("Iterating on set: ");
         for (int i = -1; (i = bytes.nextSetBit(i + 1)) != -1; ) {
             byte b = (byte) i;
-            System.out.println(b);
+            System.out.print(b + " ");
         }
+        System.out.println();
+
+        BitSet bytes2 = new BitSet();
+        bytes2.set(0, 4);
+
+        bytes.and(bytes2); // intersection
+//        bytes.andNot(bytes2); // subtraction
+//        bytes.or(bytes2); // addition
+        System.out.println("Set1: " + bytes);
+        System.out.println("Set2: " + bytes2);
+        System.out.println("Intersects: " + bytes.intersects(bytes2));
     }
 }
