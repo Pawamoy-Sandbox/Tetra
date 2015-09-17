@@ -19,8 +19,8 @@ public class Tetra {
         String tetra1 = "ACGT";
         String tetra2 = "CGCT";
 
-        System.out.println("tetra: " + tetra1 + "\tcompl:" + Compl(tetra1));
-        System.out.println("tetra: " + tetra2 + "\tcompl:" + Compl(tetra2));
+        System.out.println("tetra: " + tetra1 + "\tcompl:" + Compl(tetra1) + "\tAutoCompl: " + IsAutoCompl(tetra1));
+        System.out.println("tetra: " + tetra2 + "\tcompl:" + Compl(tetra2) + "\tAutoCompl: " + IsAutoCompl(tetra2));
 
     }
 
@@ -44,5 +44,10 @@ public class Tetra {
         }
 
         return res.toString();
+    }
+
+    public static boolean IsAutoCompl(String tetra)
+    {
+        return tetra.equals(Compl(tetra));
     }
 }
