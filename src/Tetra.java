@@ -7,36 +7,54 @@ import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.CharBuffer;
 import java.util.*;
 
 public class Tetra
 {
+    static List<String> tetra256 = new ArrayList<>();
+    static List<String> tetraAutoCompl12 = new ArrayList<>();
 
     public static void main (String[] args) {
-        ICombinatoricsVector<String> allTetra = Factory.createVector(new String[]{"A", "C", "G", "T"});
-        ICombinatoricsVector<String> allTetraCompl = Factory.createVector(new String[]{"T", "G", "C", "A"});
+        readTetra256();
 
-        // Create the permutation generator by calling the appropriate method in the Factory class
-        Generator<String> gen = Factory.createPermutationWithRepetitionGenerator(allTetra, 4);
-
-        // Print the result
-        for (ICombinatoricsVector<String> perm : gen)
-            System.out.println(perm);
-
-        String tetra1 = "ACGT";
-        String tetra2 = "CGCT";
-
-        System.out.println("tetra: " + tetra1 + "\tcompl:" + compl(tetra1) + "\tAutoCompl: " + isAutoCompl(tetra1));
-        System.out.println("tetra: " + tetra2 + "\tcompl:" + compl(tetra2) + "\tAutoCompl: " + isAutoCompl(tetra2));
-
+        for (String tetra : tetra256)
+        {
+            System.out.println("tetra: " + tetra + "\tcompl:" + compl(tetra) + "\tAutoCompl: " + isAutoCompl(tetra));
+        }
 
         tetraToGraphExample();
         bitSetExample();
     }
 
+    public static void readTetra256()
+    {
+        try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
+        {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                tetra256.add(line);
+
+                if (isAutoCompl(line))
+                    tetraAutoCompl12.add(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
     {
+        //simply shifting 3 times
+        //ACGT for exemple
+        //A CGT ; AC GT then ACG T
         for (int i = 0; i < 3; i++)
         {
             String firstElement = tetra.substring(0, i+1);
