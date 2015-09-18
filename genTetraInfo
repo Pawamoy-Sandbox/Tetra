@@ -1,0 +1,9 @@
+#!/bin/bash
+i=0
+for tetra in $(cat tetra256.txt); do
+    compl=$(./compl $tetra)
+    complIndex=$(./stringToByte $compl)
+    autoCompl=$([ $tetra = $compl ] && echo true || echo false)
+    echo $i:$tetra:$complIndex:$compl:$autoCompl
+    let i++
+done

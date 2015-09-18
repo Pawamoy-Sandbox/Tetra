@@ -1,0 +1,13 @@
+#!/bin/bash
+
+i=0
+for tetra in $(cat tetra256.txt); do
+    byte=$i
+    compl=$(./compl $tetra)
+    cByteS=$(./stringToByte $compl)
+    cByteB=$(./complByte $byte)
+    [ $cByteS -ne $cByteB ] && { echo $cByteB; grep $tetra infoTetra.txt; exit 1; }
+    let i++
+done
+
+echo "Ok"

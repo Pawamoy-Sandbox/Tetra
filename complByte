@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+import sys
+import math
+
+if len(sys.argv) < 2:
+  print 'usage: %s BYTE' % sys.argv[0]
+  exit(1)
+
+def compl(s, b):
+  T = math.pow(s, s) - 1
+  s2 = math.pow(s, 2)
+  s3 = math.pow(s, 3)
+  # don't simplify: natural divisions can result in 0
+  c = T - int(b/s3) - s*(int(b/s2)) + s2*(int(b/s3) - int(b/s)) + s3*(int(b/s2) - (b%s))
+  return int(c)
+
+s = 4  # 4 letters in tetranucleotides
+b = int(sys.argv[1])
+c = compl(s, b)
+
+print c

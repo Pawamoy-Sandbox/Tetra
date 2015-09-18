@@ -1,0 +1,16 @@
+#!/bin/bash
+
+letterTransform() {
+    case $1 in
+        A) printf T ;;
+        C) printf G ;;
+        G) printf C ;;
+        T) printf A ;;
+    esac
+}
+
+tetra=$1
+for letter in $(echo $1 | grep -o [ACGT]); do
+    compl=$(letterTransform $letter)$compl
+done
+echo $compl

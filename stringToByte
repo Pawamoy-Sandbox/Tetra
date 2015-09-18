@@ -1,0 +1,4 @@
+#!/bin/bash
+
+i=$(grep -n $1 tetra256.txt | cut -d':' -f1)
+echo $((i-1))
