@@ -2,12 +2,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class CodeSet {
 
-    private static List<String> S256 = new ArrayList<>();
-    private static List<String> S12 = new ArrayList<>();
+    public static List<String> S256 = new ArrayList<>();
+    public static List<String> S12 = new ArrayList<>();
+    public static BitSet BS12 = new BitSet();
+    public static List<Integer> SByteCompl = new ArrayList<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -15,7 +18,7 @@ public class CodeSet {
         public static final CodeSet INSTANCE = new CodeSet();
     }
 
-    public static CodeSet getInstance()
+    public static CodeSet initialize()
     {
         return SingletonHolder.INSTANCE;
     }
@@ -24,19 +27,29 @@ public class CodeSet {
     private CodeSet()
     {
         readTetra256();
+        readByteCompl();
     }
 
-    private void readTetra256()
+    private static void readTetra256()
     {
         try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
         {
             String line;
 
+            int i = 0;
             while ((line = br.readLine()) != null) {
+                if (line.isEmpty())
+                    continue;
+
                 S256.add(line);
 
                 if (isAutoCompl(line))
+                {
                     S12.add(line);
+                    BS12.set(i);
+                }
+
+                i++;
             }
 
         } catch (IOException e) {
@@ -44,7 +57,22 @@ public class CodeSet {
         }
     }
 
-    public String compl(String tetra)
+    private static void readByteCompl()
+    {
+        try (BufferedReader br = new BufferedReader(new FileReader("byteCompl.txt")))
+        {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                SByteCompl.add(Integer.parseInt(line));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String compl(String tetra)
     {
         StringBuilder res = new StringBuilder();
 
@@ -66,29 +94,28 @@ public class CodeSet {
         return res.toString();
     }
 
-    public byte compl(byte tetra)
+    public static int compl(int tetra)
     {
-        // TODO: implement this method
-        return (byte) 0;
+        return SByteCompl.get(tetra);
     }
 
-    public boolean isAutoCompl(String tetra)
+    public static boolean isAutoCompl(String tetra)
     {
         return tetra.equals(compl(tetra));
     }
 
-    public boolean isAutoCompl(byte tetra)
+    public static boolean isAutoCompl(int tetra)
     {
         return tetra == compl(tetra);
     }
 
-    public String byteToString(byte t)
+    public static String byteToString(int t)
     {
-        return S256.get((int) t);
+        return S256.get(t);
     }
 
-    public byte stringToByte(String t)
+    public static int stringToByte(String t)
     {
-        return (byte) S256.indexOf(t);
+        return S256.indexOf(t);
     }
 }

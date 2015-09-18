@@ -3,45 +3,34 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
 public class Tetra
 {
-    /* New static class CodeSet:
-     * CodeSet codeset = CodeSet.getInstance();
-     * byte b = (byte) 7;
-     * codeset.byteToString(b);
-     * codeset.isAutoCompl(b);
-     */
-    static List<String> tetra256 = new ArrayList<>();
-    static List<String> tetraAutoCompl12 = new ArrayList<>();
-
-    public static void main (String[] args) {
-        readTetra256();
+    public static void main (String[] args)
+    {
+        CodeSet.initialize();
 
         System.out.println("=================");
-        for (String tetra : tetra256)
+        for (int i = 0; i < 256; i++)
         {
-            System.out.println("tetra: " + tetra + "\tcompl:" + compl(tetra) + "\tAutoCompl: " + isAutoCompl(tetra));
+            System.out.println("tetra: " + CodeSet.byteToString(i)
+                    + "\tcompl:" + CodeSet.byteToString(CodeSet.compl(i))
+                    + "\tAutoCompl: " + CodeSet.isAutoCompl(i));
         }
         System.out.println("=================");
-        System.out.println("=================");
-        for (String tetra : tetraAutoCompl12)
+        for (int i = -1; (i = CodeSet.BS12.nextSetBit(i + 1)) != -1; )
         {
-            System.out.println("tetra: " + tetra + "\tcompl:" + compl(tetra) + "\tAutoCompl: " + isAutoCompl(tetra));
+            System.out.println("tetra: " + CodeSet.byteToString(i)
+                    + "\tcompl:" + CodeSet.byteToString(CodeSet.compl(i))
+                    + "\tAutoCompl: " + CodeSet.isAutoCompl(i));
         }
         System.out.println("=================");
 
-        bitSetExample();
-        System.out.println("=================");
-
-        List<String> tetraTreatedList = tetra256;
-        tetraTreatedList.removeAll(tetraAutoCompl12);
+        List<String> tetraTreatedList = CodeSet.S256;
+        tetraTreatedList.removeAll(CodeSet.S12);
 
         for (String tetraPair : checkingLoopsForl2(tetraTreatedList))
         {
@@ -53,24 +42,6 @@ public class Tetra
             System.out.println("tetra pair without cycle: " + tetraPair);
         }
 
-    }
-
-    public static void readTetra256()
-    {
-        try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
-        {
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                tetra256.add(line);
-
-                if (isAutoCompl(line))
-                    tetraAutoCompl12.add(line);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static List<String> checkingLoopsForl2(List<String> tetraTreatedList)
@@ -135,7 +106,7 @@ public class Tetra
             }
         }
 
-        System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size() + " elements");
+        System.out.println(nbLoop + " loops in " + tetraTreatedList.size() * tetraTreatedList.size() + " elements");
 
         return res;
     }
@@ -177,35 +148,8 @@ public class Tetra
         return false;
     }
 
-    public static String compl(String tetra)
+    public static void bitSetExample()
     {
-        StringBuilder res = new StringBuilder();
-
-        for (char ch: tetra.toCharArray()) {
-            char chCompl = 'A';
-
-            if (ch == 'A')
-                chCompl ='T';
-            if (ch == 'C')
-                chCompl ='G';
-            if (ch == 'G')
-                chCompl ='C';
-            if (ch == 'T')
-                chCompl ='A';
-
-            res.insert(0,chCompl);
-        }
-
-        return res.toString();
-    }
-
-    public static boolean isAutoCompl(String tetra)
-    {
-        return tetra.equals(compl(tetra));
-    }
-
-    public static void bitSetExample() {
-
         BitSet bytes = new BitSet();
 
         bytes.set(3);
