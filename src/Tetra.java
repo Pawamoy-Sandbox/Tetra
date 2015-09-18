@@ -38,7 +38,10 @@ public class Tetra
         List<String> tetraTreatedList = tetra256;
         tetraTreatedList.removeAll(tetraAutoCompl12);
 
-        checkingLoopsForl2(tetraTreatedList);
+        for (String tetraPair : checkingLoopsForl2(tetraTreatedList))
+        {
+            System.out.println("tetra pair without cycle: " + tetraPair);
+        }
     }
 
     public static void readTetra256()
@@ -59,10 +62,12 @@ public class Tetra
         }
     }
 
-    public static void checkingLoopsForl2(List<String> tetraTreatedList)
+    public static List<String> checkingLoopsForl2(List<String> tetraTreatedList)
     {
         int nbLoop = 0;
         int l = 2;
+
+        List<String> res = new ArrayList<>();
 
         for (int i = 0; i < tetraTreatedList.size(); i++)
         {
@@ -70,17 +75,25 @@ public class Tetra
             {
                 List<String> tetraList = new ArrayList<>();
 
-                tetraList.add(tetraTreatedList.get(i));
-                tetraList.add(tetraTreatedList.get(j));
+                String firstElement = tetraTreatedList.get(i);
+                String secondElement = tetraTreatedList.get(j);
+                tetraList.add(firstElement);
+                tetraList.add(secondElement);
 
                 if(checkLoopsInTetraGraph(tetraList))
                 {
                     nbLoop++;
                 }
+                else
+                {
+                    res.add(firstElement + '-' + secondElement);
+                }
             }
         }
 
         System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size() + " elements");
+
+        return res;
     }
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
