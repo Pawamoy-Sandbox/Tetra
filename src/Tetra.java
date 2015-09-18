@@ -31,7 +31,6 @@ public class Tetra
         }
         System.out.println("=================");
 
-        //tetraToGraphExample();
         bitSetExample();
         System.out.println("=================");
 
@@ -131,30 +130,6 @@ public class Tetra
 
         return false;
     }
-
-    public static void tetraToGraphExample()
-    {
-        DirectedGraph<String, DefaultEdge> g =
-                new DefaultDirectedGraph<String, DefaultEdge>
-                        (DefaultEdge.class);
-
-        String tetra1 = "ACGT";
-        String tetra2 = "CGTA";
-
-        addTetraToGraph(tetra1, g);
-        addTetraToGraph(tetra2, g);
-
-
-        System.out.println(g.toString());
-
-        // Are there cycles in the dependencies.
-        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
-        // Cycle(s) detected.
-        if (cycleDetector.detectCycles()) {
-            System.out.println("cycle detected. Aborting");
-
-        }
-    }                                                                                                                                                                                                                                                                                                                          
 
     public static String compl(String tetra)
     {
