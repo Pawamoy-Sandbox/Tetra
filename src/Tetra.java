@@ -2,17 +2,13 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.traverse.TopologicalOrderIterator;
-import org.paukov.combinatorics.Factory;
-import org.paukov.combinatorics.Generator;
-import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 public class Tetra
 {
@@ -22,13 +18,27 @@ public class Tetra
     public static void main (String[] args) {
         readTetra256();
 
+        System.out.println("=================");
         for (String tetra : tetra256)
         {
             System.out.println("tetra: " + tetra + "\tcompl:" + compl(tetra) + "\tAutoCompl: " + isAutoCompl(tetra));
         }
+        System.out.println("=================");
+        System.out.println("=================");
+        for (String tetra : tetraAutoCompl12)
+        {
+            System.out.println("tetra: " + tetra + "\tcompl:" + compl(tetra) + "\tAutoCompl: " + isAutoCompl(tetra));
+        }
+        System.out.println("=================");
 
-        tetraToGraphExample();
+        //tetraToGraphExample();
         bitSetExample();
+        System.out.println("=================");
+
+        List<String> tetraTreatedList = tetra256;
+        tetraTreatedList.removeAll(tetraAutoCompl12);
+
+        checkingLoopsForl2(tetraTreatedList);
     }
 
     public static void readTetra256()
@@ -49,6 +59,29 @@ public class Tetra
         }
     }
 
+    public static void checkingLoopsForl2(List<String> tetraTreatedList)
+    {
+        int nbLoop = 0;
+        int l = 2;
+
+        for (int i = 0; i < tetraTreatedList.size(); i++)
+        {
+            for (int j = 0; j < tetraTreatedList.size(); j++)
+            {
+                List<String> tetraList = new ArrayList<>();
+
+                tetraList.add(tetraTreatedList.get(i));
+                tetraList.add(tetraTreatedList.get(j));
+
+                if(checkLoopsInTetraGraph(tetraList))
+                {
+                    nbLoop++;
+                }
+            }
+        }
+
+        System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size() + " elements");
+    }
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
     {
@@ -65,6 +98,26 @@ public class Tetra
 
             g.addEdge(firstElement, secondElement);
         }
+    }
+
+    public static boolean checkLoopsInTetraGraph(List<String> tetraList)
+    {
+        DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+        for (String tetra : tetraList)
+        {
+            addTetraToGraph(tetra, g);
+        }
+
+        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
+
+        if (cycleDetector.detectCycles())
+        {
+            System.out.println(g.toString());
+            return true;
+        }
+
+        return false;
     }
 
     public static void tetraToGraphExample()
