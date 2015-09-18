@@ -65,7 +65,6 @@ public class Tetra
     public static List<String> checkingLoopsForl2(List<String> tetraTreatedList)
     {
         int nbLoop = 0;
-        int l = 2;
 
         List<String> res = new ArrayList<>();
 
