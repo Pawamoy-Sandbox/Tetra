@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CodeSet {
 
-    private static ArrayList<String> S256;
+    private static List<String> S256 = new ArrayList<>();
     private static List<String> S12 = new ArrayList<>();
 
     // Singleton Stuff
@@ -66,8 +66,29 @@ public class CodeSet {
         return res.toString();
     }
 
+    public static byte compl(byte tetra)
+    {
+        // TODO: implement this method
+        return (byte) 0;
+    }
+
     public static boolean isAutoCompl(String tetra)
     {
         return tetra.equals(compl(tetra));
+    }
+
+    public static boolean isAutoCompl(byte tetra)
+    {
+        return tetra == compl(tetra);
+    }
+
+    public String byteToString(byte t)
+    {
+        return S256.get((int) t);
+    }
+
+    public byte stringToByte(String t)
+    {
+        return (byte) S256.indexOf(t);
     }
 }

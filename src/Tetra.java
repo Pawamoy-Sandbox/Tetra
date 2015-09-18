@@ -12,6 +12,9 @@ import java.util.List;
 
 public class Tetra
 {
+    /* New static class CodeSet:
+     * 
+     */
     static List<String> tetra256 = new ArrayList<>();
     static List<String> tetraAutoCompl12 = new ArrayList<>();
 
