@@ -47,6 +47,12 @@ public class Tetra
         {
             System.out.println("tetra pair without cycle: " + tetraPair);
         }
+
+        for (String tetraPair : checkingLoopsForl3(tetraTreatedList))
+        {
+            System.out.println("tetra pair without cycle: " + tetraPair);
+        }
+
     }
 
     public static void readTetra256()
@@ -91,6 +97,40 @@ public class Tetra
                 else
                 {
                     res.add(firstElement + '-' + secondElement);
+                }
+            }
+        }
+
+        System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size() + " elements");
+
+        return res;
+    }
+
+    public static List<String> checkingLoopsForl3(List<String> tetraTreatedList)
+    {
+        int nbLoop = 0;
+
+        List<String> res = new ArrayList<>();
+
+        for (int i = 0; i < tetraTreatedList.size(); i++)
+        {
+            for (int j = 0; j < tetraTreatedList.size(); j++)
+            {
+                for (int k = 0; k < tetraTreatedList.size(); k++) {
+                    List<String> tetraList = new ArrayList<>();
+
+                    String firstElement = tetraTreatedList.get(i);
+                    String secondElement = tetraTreatedList.get(j);
+                    String thirdElement = tetraTreatedList.get(k);
+                    tetraList.add(firstElement);
+                    tetraList.add(secondElement);
+                    tetraList.add(thirdElement);
+
+                    if (checkLoopsInTetraGraph(tetraList)) {
+                        nbLoop++;
+                    } else {
+                        res.add(firstElement + '-' + secondElement + '-' + thirdElement);
+                    }
                 }
             }
         }
