@@ -26,7 +26,7 @@ public class CodeSet {
         readTetra256();
     }
 
-    private static void readTetra256()
+    private void readTetra256()
     {
         try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
         {
@@ -44,7 +44,7 @@ public class CodeSet {
         }
     }
 
-    public static String compl(String tetra)
+    public String compl(String tetra)
     {
         StringBuilder res = new StringBuilder();
 
@@ -66,18 +66,18 @@ public class CodeSet {
         return res.toString();
     }
 
-    public static byte compl(byte tetra)
+    public byte compl(byte tetra)
     {
         // TODO: implement this method
         return (byte) 0;
     }
 
-    public static boolean isAutoCompl(String tetra)
+    public boolean isAutoCompl(String tetra)
     {
         return tetra.equals(compl(tetra));
     }
 
-    public static boolean isAutoCompl(byte tetra)
+    public boolean isAutoCompl(byte tetra)
     {
         return tetra == compl(tetra);
     }

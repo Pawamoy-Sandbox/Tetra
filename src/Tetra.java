@@ -13,7 +13,10 @@ import java.util.List;
 public class Tetra
 {
     /* New static class CodeSet:
-     * 
+     * CodeSet codeset = CodeSet.getInstance();
+     * byte b = (byte) 7;
+     * codeset.byteToString(b);
+     * codeset.isAutoCompl(b);
      */
     static List<String> tetra256 = new ArrayList<>();
     static List<String> tetraAutoCompl12 = new ArrayList<>();
