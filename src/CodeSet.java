@@ -11,12 +11,17 @@ public class CodeSet {
     public static List<String> S256 = new ArrayList<>();
     public static List<String> S240 = new ArrayList<>();
     public static List<String> S228 = new ArrayList<>();
-    public static List<String> S114 = new ArrayList<>();
     public static List<String> S126 = new ArrayList<>();
-    public static List<String> S12 = new ArrayList<>();
+    public static List<String> S114 = new ArrayList<>();
     public static List<String> S16 = new ArrayList<>();
-    public static BitSet BS12 = new BitSet();
+    public static List<String> S12 = new ArrayList<>();
+    public static BitSet BS256 = new BitSet();
+    public static BitSet BS240 = new BitSet();
+    public static BitSet BS228 = new BitSet();
+    public static BitSet BS126 = new BitSet();
+    public static BitSet BS114 = new BitSet();
     public static BitSet BS16 = new BitSet();
+    public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
 
     // Singleton Stuff
@@ -37,6 +42,7 @@ public class CodeSet {
         readTetra16();
         readByteCompl();
 
+        // String sets
         S240 = new ArrayList<>(S256);
         S240.removeAll(S16);
 
@@ -57,6 +63,19 @@ public class CodeSet {
         S126 = new ArrayList<>(S114);
         S126.addAll(S12);
         Collections.sort(S126);
+
+        // Bit sets
+        BS240.or(BS256);
+        BS240.andNot(BS16);
+
+        BS228.or(BS240);
+        BS228.andNot(BS12);
+
+        for (String s : S114)
+            BS114.set(stringToByte(s));
+
+        BS126.or(BS114);
+        BS126.or(BS12);
     }
 
     private static void readTetra256()
@@ -71,6 +90,7 @@ public class CodeSet {
                     continue;
 
                 S256.add(line);
+                BS256.set(i);
 
                 if (isAutoCompl(line))
                 {
