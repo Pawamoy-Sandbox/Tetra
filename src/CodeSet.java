@@ -4,17 +4,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CodeSet {
 
-    public static List<String> S256 = new ArrayList<>();
-    public static List<String> S240 = new ArrayList<>();
-    public static List<String> S228 = new ArrayList<>();
-    public static List<String> S12 = new ArrayList<>();
-    public static List<String> S16 = new ArrayList<>();
+    public static List<Integer> SByteCompl;
+    public static List<String> S256;
+    public static List<String> S240;
+    public static List<String> S228;
+    public static List<String> S12;
+    public static List<String> S16;
     public static BitSet BS12 = new BitSet();
     public static BitSet BS16 = new BitSet();
-    public static List<Integer> SByteCompl = new ArrayList<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -34,15 +35,20 @@ public class CodeSet {
         readTetra16();
         readByteCompl();
 
-        S240 = new ArrayList<>(S256);
-        S240.removeAll(S16);
+        S240 = new ArrayList<>();
+        S240.addAll(S256.stream().collect(Collectors.toList()));
+        S16.forEach(S240::remove);
 
-        S228 = new ArrayList<>(S240);
-        S228.removeAll(S12);
+        S228 = new ArrayList<>();
+        S228.addAll(S240.stream().collect(Collectors.toList()));
+        S12.forEach(S228::remove);
     }
 
     private static void readTetra256()
     {
+        S256 = new ArrayList<>();
+        S12 = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
         {
             String line;
@@ -70,6 +76,8 @@ public class CodeSet {
 
     private static void readTetra16()
     {
+        S16 = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader("tetra16.txt")))
         {
             String line;
@@ -92,6 +100,8 @@ public class CodeSet {
 
     private static void readByteCompl()
     {
+        SByteCompl = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader("byteCompl.txt")))
         {
             String line;
