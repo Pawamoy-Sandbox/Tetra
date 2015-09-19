@@ -191,4 +191,26 @@ public class CodeSet {
     {
         return S256.indexOf(t);
     }
+
+    public static List<BitSet> combine(BitSet source, int l, int parts, int part)
+    {
+        int c = source.cardinality();
+        int size = (int) (Math.pow((double) c, 2) - c) / 2;
+        int part_size = size / parts;
+        long exend, instart = part_size * (part-1);
+
+        if (parts == part)
+            exend = size;
+        else
+            exend = part_size * part;
+
+        return combine(source, l, instart, exend);
+    }
+
+    public static List<BitSet> combine(BitSet source, int l, long instart, long exend)
+    {
+        // TODO
+        List<BitSet> result = new ArrayList<>();
+        return result;
+    }
 }
