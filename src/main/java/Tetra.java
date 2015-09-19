@@ -2,6 +2,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +15,8 @@ public class Tetra
     public static void main (String[] args)
     {
         CodeSet.initialize();
+
+        bitSetExample();
 
 //        System.out.println("=================");
 //        for (int i = 0; i < 256; i++)
@@ -38,53 +41,53 @@ public class Tetra
 //                    + "\t" + CodeSet.isAutoCompl(tetra));
 //        }
 
-        try {
-            FileWriter fw_l2 = new FileWriter("result_l2.txt");
-            FileWriter fw_l2_autocompl = new FileWriter("result_l2_autocompl.txt");
-
-            List<String> resultl2 = checkingLoopsForl2(CodeSet.S126);
-            List<String> autoComplList = new ArrayList<>();
-
-            fw_l2.write(resultl2.size() + " valid on " + CodeSet.S126.size()* CodeSet.S126.size() + " elements"+ '\n');
-
-            for (String tetraPair : resultl2)
-            {
-                fw_l2.write(tetraPair);
-                fw_l2.write('\n');
-
-                String firstElement = tetraPair.split("-")[0];
-                if (CodeSet.isAutoCompl(firstElement) && !autoComplList.contains(firstElement)) {
-                    autoComplList.add(firstElement);
-                    fw_l2_autocompl.write(firstElement);
-                    fw_l2_autocompl.write('\n');
-                }
-            }
-
-            fw_l2.close();
-            fw_l2_autocompl.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            FileWriter fw_l3 = new FileWriter("result_l3.txt");
-
-            List<String> resultl3 = checkingLoopsForl3(CodeSet.S126);
-
-            fw_l3.write(resultl3.size() + " valid on " + CodeSet.S126.size() * CodeSet.S126.size() * CodeSet.S126.size() + " elements" + '\n');
-
-            for (String tetraPair : resultl3)
-            {
-                fw_l3.write(tetraPair);
-                fw_l3.write('\n');
-            }
-
-            fw_l3.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            FileWriter fw_l2 = new FileWriter("result_l2.txt");
+//            FileWriter fw_l2_autocompl = new FileWriter("result_l2_autocompl.txt");
+//
+//            List<String> resultl2 = checkingLoopsForl2(CodeSet.S126);
+//            List<String> autoComplList = new ArrayList<>();
+//
+//            fw_l2.write(resultl2.size() + " valid on " + CodeSet.S126.size()* CodeSet.S126.size() + " elements"+ '\n');
+//
+//            for (String tetraPair : resultl2)
+//            {
+//                fw_l2.write(tetraPair);
+//                fw_l2.write('\n');
+//
+//                String firstElement = tetraPair.split("-")[0];
+//                if (CodeSet.isAutoCompl(firstElement) && !autoComplList.contains(firstElement)) {
+//                    autoComplList.add(firstElement);
+//                    fw_l2_autocompl.write(firstElement);
+//                    fw_l2_autocompl.write('\n');
+//                }
+//            }
+//
+//            fw_l2.close();
+//            fw_l2_autocompl.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            FileWriter fw_l3 = new FileWriter("result_l3.txt");
+//
+//            List<String> resultl3 = checkingLoopsForl3(CodeSet.S126);
+//
+//            fw_l3.write(resultl3.size() + " valid on " + CodeSet.S126.size() * CodeSet.S126.size() * CodeSet.S126.size() + " elements" + '\n');
+//
+//            for (String tetraPair : resultl3)
+//            {
+//                fw_l3.write(tetraPair);
+//                fw_l3.write('\n');
+//            }
+//
+//            fw_l3.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -218,13 +221,42 @@ public class Tetra
         System.out.println();
 
         BitSet bytes2 = new BitSet();
-        bytes2.set(0, 4);
+        bytes2.set(0);
+        bytes2.set(4);
 
-        bytes.and(bytes2); // intersection
+//        bytes.and(bytes2); // intersection
 //        bytes.andNot(bytes2); // subtraction
 //        bytes.or(bytes2); // addition
         System.out.println("Set1: " + bytes);
         System.out.println("Set2: " + bytes2);
         System.out.println("Intersects: " + bytes.intersects(bytes2));
+
+
+        BitSet b3 = new BitSet();
+        b3.set(2);
+        b3.set(1);
+        System.out.println("Set3: " + b3);
+
+        List<BitSet> list = new ArrayList<>();
+        list.add(bytes2);
+        list.add(b3);
+
+        System.out.println("Is first set composed of one of the two other set? " + CodeSet.containsNotValidSubset(bytes, list));
+
+//        System.out.println("============================================================");
+//        System.out.println("Bit couples with BS126");
+//        for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS126, 2, 0, 0))
+//            System.out.println(v.getVector());
+
+        System.out.println("============================================================");
+        System.out.println("Trying with l=60 to see exec time (BS126)");
+        int i = 0, limit = 1000000000;
+        for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS126, 60, 0, 0))
+        {
+            System.out.println(v.getVector());
+            i++;
+            if (i == limit)
+                break;
+        }
     }
 }
