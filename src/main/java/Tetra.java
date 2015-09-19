@@ -1,5 +1,3 @@
-package main.java;
-
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -47,7 +45,7 @@ public class Tetra
             List<String> resultl2 = checkingLoopsForl2(CodeSet.S126);
             List<String> autoComplList = new ArrayList<>();
 
-            fw_l2.write(resultl2.size() + " valid on " + CodeSet.S126.size()*CodeSet.S126.size() + " elements"+ '\n');
+            fw_l2.write(resultl2.size() + " valid on " + CodeSet.S126.size()* CodeSet.S126.size() + " elements"+ '\n');
 
             for (String tetraPair : resultl2)
             {
@@ -64,6 +62,25 @@ public class Tetra
 
             fw_l2.close();
             fw_l2_autocompl.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter fw_l3 = new FileWriter("result_l3.txt");
+
+            List<String> resultl3 = checkingLoopsForl3(CodeSet.S126);
+
+            fw_l3.write(resultl3.size() + " valid on " + CodeSet.S126.size() * CodeSet.S126.size() * CodeSet.S126.size() + " elements" + '\n');
+
+            for (String tetraPair : resultl3)
+            {
+                fw_l3.write(tetraPair);
+                fw_l3.write('\n');
+            }
+
+            fw_l3.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,6 +121,42 @@ public class Tetra
         return res;
     }
 
+    public static List<String> checkingLoopsForl3(List<String> tetraTreatedList)
+    {
+        int nbLoop = 0;
+
+        List<String> res = new ArrayList<>();
+
+        for (int i = 0; i < tetraTreatedList.size(); i++)
+        {
+            for (int j = 0; j < tetraTreatedList.size(); j++)
+            {
+                for (int k = 0; k < tetraTreatedList.size(); k++){
+                    List<String> tetraList = new ArrayList<>();
+
+                    String firstElement = tetraTreatedList.get(i);
+                    String secondElement = tetraTreatedList.get(j);
+                    String thirdElement = tetraTreatedList.get(k);
+                    tetraList.add(firstElement);
+                    tetraList.add(secondElement);
+                    tetraList.add(thirdElement);
+
+                    if(checkLoopsInTetraGraph(tetraList))
+                    {
+                        nbLoop++;
+                    }
+                    else
+                    {
+                        res.add(firstElement + '-' + secondElement + '-' + thirdElement);
+                    }
+                }
+            }
+        }
+
+        System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size()*tetraTreatedList.size() + " elements");
+
+        return res;
+    }
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
     {
