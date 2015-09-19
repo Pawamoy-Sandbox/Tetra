@@ -30,12 +30,12 @@ public class Tetra
         System.out.println("=================");
 
 
-        for (String tetraPair : checkingLoopsForl2(CodeSet.S240))
+        for (String tetraPair : checkingLoopsForl2(CodeSet.S228))
         {
             System.out.println("tetra pair without cycle: " + tetraPair);
         }
 
-        for (String tetraPair : checkingLoopsForl3(CodeSet.S240))
+        for (String tetraPair : checkingLoopsForl3(CodeSet.S228))
         {
             System.out.println("tetra pair without cycle: " + tetraPair);
         }

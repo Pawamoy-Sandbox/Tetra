@@ -9,6 +9,7 @@ public class CodeSet {
 
     public static List<String> S256 = new ArrayList<>();
     public static List<String> S240 = new ArrayList<>();
+    public static List<String> S228 = new ArrayList<>();
     public static List<String> S12 = new ArrayList<>();
     public static List<String> S16 = new ArrayList<>();
     public static BitSet BS12 = new BitSet();
@@ -33,8 +34,11 @@ public class CodeSet {
         readTetra16();
         readByteCompl();
 
-        S240 = S256;
+        S240 = new ArrayList<>(S256);
         S240.removeAll(S16);
+
+        S228 = new ArrayList<>(S240);
+        S228.removeAll(S12);
     }
 
     private static void readTetra256()
