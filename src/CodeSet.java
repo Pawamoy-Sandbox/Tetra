@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
 
 public class CodeSet {
@@ -11,6 +12,7 @@ public class CodeSet {
     public static List<String> S240 = new ArrayList<>();
     public static List<String> S228 = new ArrayList<>();
     public static List<String> S114 = new ArrayList<>();
+    public static List<String> S126 = new ArrayList<>();
     public static List<String> S12 = new ArrayList<>();
     public static List<String> S16 = new ArrayList<>();
     public static BitSet BS12 = new BitSet();
@@ -51,6 +53,10 @@ public class CodeSet {
                 S114.add(s);
             }
         }
+
+        S126 = new ArrayList<>(S114);
+        S126.addAll(S12);
+        Collections.sort(S126);
     }
 
     private static void readTetra256()

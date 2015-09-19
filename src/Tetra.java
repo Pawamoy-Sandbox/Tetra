@@ -29,11 +29,11 @@ public class Tetra
 //        }
 //        System.out.println("=================");
 
-        for (String tetra : CodeSet.S114)
+        for (String tetra : CodeSet.S126)
         {
-            System.out.println("tetra: " + tetra
-                    + "\tcompl:" + CodeSet.compl(tetra)
-                    + "\tAutoCompl: " + CodeSet.isAutoCompl(tetra));
+            System.out.println(tetra
+                    + "\t" + CodeSet.compl(tetra)
+                    + "\t" + CodeSet.isAutoCompl(tetra));
         }
 
 
