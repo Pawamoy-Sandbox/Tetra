@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 public class CodeSet {
 
-    public static List<Integer> SByteCompl;
-    public static List<String> S256;
-    public static List<String> S240;
-    public static List<String> S228;
-    public static List<String> S114;
-    public static List<String> S12;
-    public static List<String> S16;
+    public static List<Integer> SByteCompl = new ArrayList<>();
+    public static List<String> S256 = new ArrayList<>();
+    public static List<String> S240 = new ArrayList<>();
+    public static List<String> S228 = new ArrayList<>();
+    public static List<String> S114 = new ArrayList<>();
+    public static List<String> S12 = new ArrayList<>();
+    public static List<String> S16 = new ArrayList<>();
     public static BitSet BS12 = new BitSet();
     public static BitSet BS16 = new BitSet();
 
@@ -36,30 +36,22 @@ public class CodeSet {
         readTetra16();
         readByteCompl();
 
-        S240 = new ArrayList<>();
         S240.addAll(S256.stream().collect(Collectors.toList()));
         S16.forEach(S240::remove);
 
-        S228 = new ArrayList<>();
         S228.addAll(S240.stream().collect(Collectors.toList()));
         S12.forEach(S228::remove);
 
-        S114 = new ArrayList<>();
         List<String> avoidList = new ArrayList<>();
 
-        for (String s : S228){
-            if (!avoidList.contains(s)){
-                avoidList.add(CodeSet.compl(s));
-                S114.add(s);
-            }
-        }
+        S228.stream().filter(s -> !avoidList.contains(s)).forEach(s -> {
+            avoidList.add(CodeSet.compl(s));
+            S114.add(s);
+        });
     }
 
     private static void readTetra256()
     {
-        S256 = new ArrayList<>();
-        S12 = new ArrayList<>();
-
         try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
         {
             String line;
@@ -87,8 +79,6 @@ public class CodeSet {
 
     private static void readTetra16()
     {
-        S16 = new ArrayList<>();
-
         try (BufferedReader br = new BufferedReader(new FileReader("tetra16.txt")))
         {
             String line;
@@ -111,8 +101,6 @@ public class CodeSet {
 
     private static void readByteCompl()
     {
-        SByteCompl = new ArrayList<>();
-
         try (BufferedReader br = new BufferedReader(new FileReader("byteCompl.txt")))
         {
             String line;
