@@ -13,6 +13,7 @@ public class CodeSet {
     public static List<String> S228 = new ArrayList<>();
     public static List<String> S126 = new ArrayList<>();
     public static List<String> S114 = new ArrayList<>();
+    public static List<String> SC114 = new ArrayList<>();
     public static List<String> S16 = new ArrayList<>();
     public static List<String> S12 = new ArrayList<>();
     public static BitSet BS256 = new BitSet();
@@ -20,6 +21,7 @@ public class CodeSet {
     public static BitSet BS228 = new BitSet();
     public static BitSet BS126 = new BitSet();
     public static BitSet BS114 = new BitSet();
+    public static BitSet BSC114 = new BitSet();
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
@@ -51,11 +53,9 @@ public class CodeSet {
 
         S114 = new ArrayList<>();
 
-        List<String> avoidList = new ArrayList<>();
-
         for (String s : S228){
-            if (!avoidList.contains(s)){
-                avoidList.add(CodeSet.compl(s));
+            if (!SC114.contains(s)){
+                SC114.add(CodeSet.compl(s));
                 S114.add(s);
             }
         }
@@ -73,6 +73,8 @@ public class CodeSet {
 
         for (String s : S114)
             BS114.set(stringToByte(s));
+        BSC114.or(BS228);
+        BSC114.andNot(BS114);
 
         BS126.or(BS114);
         BS126.or(BS12);
