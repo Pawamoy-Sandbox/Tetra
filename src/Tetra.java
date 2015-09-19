@@ -29,15 +29,13 @@ public class Tetra
         }
         System.out.println("=================");
 
-        List<String> tetraTreatedList = CodeSet.S256;
-        tetraTreatedList.removeAll(CodeSet.S12);
 
-        for (String tetraPair : checkingLoopsForl2(tetraTreatedList))
+        for (String tetraPair : checkingLoopsForl2(CodeSet.S240))
         {
             System.out.println("tetra pair without cycle: " + tetraPair);
         }
 
-        for (String tetraPair : checkingLoopsForl3(tetraTreatedList))
+        for (String tetraPair : checkingLoopsForl3(CodeSet.S240))
         {
             System.out.println("tetra pair without cycle: " + tetraPair);
         }

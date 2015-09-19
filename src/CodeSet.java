@@ -8,7 +8,9 @@ import java.util.List;
 public class CodeSet {
 
     public static List<String> S256 = new ArrayList<>();
+    public static List<String> S240 = new ArrayList<>();
     public static List<String> S12 = new ArrayList<>();
+    public static List<String> S16 = new ArrayList<>();
     public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
 
@@ -27,7 +29,11 @@ public class CodeSet {
     private CodeSet()
     {
         readTetra256();
+        readTetra16();
         readByteCompl();
+
+        S240 = S256;
+        S240.removeAll(S16);
     }
 
     private static void readTetra256()
@@ -48,6 +54,27 @@ public class CodeSet {
                     S12.add(line);
                     BS12.set(i);
                 }
+
+                i++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void readTetra16()
+    {
+        try (BufferedReader br = new BufferedReader(new FileReader("tetra16.txt")))
+        {
+            String line;
+
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+                if (line.isEmpty())
+                    continue;
+
+                S16.add(line);
 
                 i++;
             }
