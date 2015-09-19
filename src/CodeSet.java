@@ -12,6 +12,7 @@ public class CodeSet {
     public static List<String> S256;
     public static List<String> S240;
     public static List<String> S228;
+    public static List<String> S114;
     public static List<String> S12;
     public static List<String> S16;
     public static BitSet BS12 = new BitSet();
@@ -42,6 +43,16 @@ public class CodeSet {
         S228 = new ArrayList<>();
         S228.addAll(S240.stream().collect(Collectors.toList()));
         S12.forEach(S228::remove);
+
+        S114 = new ArrayList<>();
+        List<String> avoidList = new ArrayList<>();
+
+        for (String s : S228){
+            if (!avoidList.contains(s)){
+                avoidList.add(CodeSet.compl(s));
+                S114.add(s);
+            }
+        }
     }
 
     private static void readTetra256()
