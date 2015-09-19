@@ -3,6 +3,8 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -29,20 +31,30 @@ public class Tetra
 //        }
 //        System.out.println("=================");
 
-        for (String tetra : CodeSet.S126)
-        {
-            System.out.println(tetra
-                    + "\t" + CodeSet.compl(tetra)
-                    + "\t" + CodeSet.isAutoCompl(tetra));
+//        for (String tetra : CodeSet.S126)
+//        {
+//            System.out.println(tetra
+//                    + "\t" + CodeSet.compl(tetra)
+//                    + "\t" + CodeSet.isAutoCompl(tetra));
+//        }
+
+        try {
+            FileWriter fw = new FileWriter("result_l2.txt");
+
+            List<String> resultl2 = checkingLoopsForl2(CodeSet.S126);
+
+            fw.write(resultl2.size() + " valid on " + CodeSet.S126.size()*CodeSet.S126.size() + " elements"+ '\n');
+
+            for (String tetraPair : resultl2)
+            {
+                fw.write(tetraPair);
+                fw.write('\n');
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-
-
-//        for (String tetraPair : checkingLoopsForl2(CodeSet.S228))
-//        {
-//            System.out.println("tetra pair without cycle: " + tetraPair);
-//        }
-//
 //        for (String tetraPair : checkingLoopsForl3(CodeSet.S228))
 //        {
 //            System.out.println("tetra pair without cycle: " + tetraPair);
@@ -83,39 +95,6 @@ public class Tetra
         return res;
     }
 
-    public static List<String> checkingLoopsForl3(List<String> tetraTreatedList)
-    {
-        int nbLoop = 0;
-
-        List<String> res = new ArrayList<>();
-
-        for (int i = 0; i < tetraTreatedList.size(); i++)
-        {
-            for (int j = 0; j < tetraTreatedList.size(); j++)
-            {
-                for (int k = 0; k < tetraTreatedList.size(); k++) {
-                    List<String> tetraList = new ArrayList<>();
-
-                    String firstElement = tetraTreatedList.get(i);
-                    String secondElement = tetraTreatedList.get(j);
-                    String thirdElement = tetraTreatedList.get(k);
-                    tetraList.add(firstElement);
-                    tetraList.add(secondElement);
-                    tetraList.add(thirdElement);
-
-                    if (checkLoopsInTetraGraph(tetraList)) {
-                        nbLoop++;
-                    } else {
-                        res.add(firstElement + '-' + secondElement + '-' + thirdElement);
-                    }
-                }
-            }
-        }
-
-        System.out.println(nbLoop + " loops in " + tetraTreatedList.size() * tetraTreatedList.size() + " elements");
-
-        return res;
-    }
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
     {
