@@ -13,21 +13,21 @@ public class Tetra
     {
         CodeSet.initialize();
 
-        System.out.println("=================");
-        for (int i = 0; i < 256; i++)
-        {
-            System.out.println("tetra: " + CodeSet.byteToString(i)
-                    + "\tcompl:" + CodeSet.byteToString(CodeSet.compl(i))
-                    + "\tAutoCompl: " + CodeSet.isAutoCompl(i));
-        }
-        System.out.println("=================");
-        for (int i = -1; (i = CodeSet.BS12.nextSetBit(i + 1)) != -1; )
-        {
-            System.out.println("tetra: " + CodeSet.byteToString(i)
-                    + "\tcompl:" + CodeSet.byteToString(CodeSet.compl(i))
-                    + "\tAutoCompl: " + CodeSet.isAutoCompl(i));
-        }
-        System.out.println("=================");
+//        System.out.println("=================");
+//        for (int i = 0; i < 256; i++)
+//        {
+//            System.out.println("tetra: " + CodeSet.byteToString(i)
+//                    + "\tcompl:" + CodeSet.byteToString(CodeSet.compl(i))
+//                    + "\tAutoCompl: " + CodeSet.isAutoCompl(i));
+//        }
+//        System.out.println("=================");
+//        for (int i = -1; (i = CodeSet.BS12.nextSetBit(i + 1)) != -1; )
+//        {
+//            System.out.println("tetra: " + CodeSet.byteToString(i)
+//                    + "\tcompl:" + CodeSet.byteToString(CodeSet.compl(i))
+//                    + "\tAutoCompl: " + CodeSet.isAutoCompl(i));
+//        }
+//        System.out.println("=================");
 
         for (String tetra : CodeSet.S228)
         {
