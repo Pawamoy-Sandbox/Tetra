@@ -196,10 +196,10 @@ public class CodeSet {
         return S256.indexOf(t);
     }
 
+    // cutting big list: how many parts, which part you want, corresponding indexes
+    // not used: just keep it here in case it is needed
 //    public static Generator<Integer> combine(BitSet source, int l, int parts, int part)
 //    {
-//        // cutting big list: how many parts, which part you want, corresponding indexes
-//        // not used: just keep it here in case it is needed
 //        int c = source.cardinality();
 //        int size = (int) (Math.pow((double) c, 2) - c) / 2;
 //        int part_size = size / parts;
@@ -213,13 +213,14 @@ public class CodeSet {
 //        return combine(source, l, instart, exend);
 //    }
 
-    public static Generator<Integer> combine(BitSet source, int l, long instart, long exend)
+    public static Generator<Integer> combine(BitSet source, int l)
     {
+        // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[source.cardinality()];
 
         int i = 0;
         for (int b = -1; (b = source.nextSetBit(b + 1)) != -1; )
-            int_set[i++] = Integer.valueOf(b);
+            int_set[i++] = b;
 
         // Create the initial vector
         ICombinatoricsVector<Integer> initialVector = Factory.createVector(int_set);
@@ -228,8 +229,9 @@ public class CodeSet {
         return Factory.createSimpleCombinationGenerator(initialVector, l);
     }
 
-    public static boolean containsNotValidSubset(BitSet bitset, List<BitSet> notvalid_list)
+    public static boolean containsNotValidSubset(BitSet bitset, List<BitSet> notValidList)
     {
+        // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[bitset.cardinality()];
 
         int i = 0;
@@ -242,13 +244,14 @@ public class CodeSet {
         // Create an instance of the subset generator
         Generator<Integer> gen = Factory.createSubSetGenerator(initialSet);
 
-        // Print the subsets
         for (ICombinatoricsVector<Integer> subSet : gen) {
+            // Convert vector to BitSet
             BitSet subset = new BitSet();
             for (Integer v : subSet.getVector())
                 subset.set(v);
 
-            if (notvalid_list.contains(subset))
+            // Check if subset is valid or not
+            if (notValidList.contains(subset))
                 return true;
         }
 

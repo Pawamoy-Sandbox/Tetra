@@ -2,6 +2,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.FileWriter;
@@ -243,19 +244,16 @@ public class Tetra
 
         System.out.println("Is first set composed of one of the two other set? " + CodeSet.containsNotValidSubset(bytes, list));
 
-//        System.out.println("============================================================");
-//        System.out.println("Bit couples with BS126");
-//        for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS126, 2, 0, 0))
-//            System.out.println(v.getVector());
-
         System.out.println("============================================================");
-        System.out.println("Trying with l=60 to see exec time (BS126)");
-        int i = 0, limit = 1000000000;
-        for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS126, 60, 0, 0))
+        System.out.println("Trying with l=60 to see exec time and memory (BS126)");
+        int i = 0, limit = 10;
+
+        Generator<Integer> gen = CodeSet.combine(CodeSet.BS126, 60);
+        for (ICombinatoricsVector<Integer> v : gen)
         {
             System.out.println(v.getVector());
-            i++;
-            if (i == limit)
+
+            if (++i == limit)
                 break;
         }
     }
