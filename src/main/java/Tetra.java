@@ -1,4 +1,4 @@
-package java;
+package main.java;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
