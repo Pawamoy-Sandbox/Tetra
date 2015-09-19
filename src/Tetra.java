@@ -1,3 +1,4 @@
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -39,19 +40,29 @@ public class Tetra
 //        }
 
         try {
-            FileWriter fw = new FileWriter("result_l2.txt");
+            FileWriter fw_l2 = new FileWriter("result_l2.txt");
+            FileWriter fw_l2_autocompl = new FileWriter("result_l2_autocompl.txt");
 
             List<String> resultl2 = checkingLoopsForl2(CodeSet.S126);
+            List<String> autoComplList = new ArrayList<>();
 
-            fw.write(resultl2.size() + " valid on " + CodeSet.S126.size()*CodeSet.S126.size() + " elements"+ '\n');
+            fw_l2.write(resultl2.size() + " valid on " + CodeSet.S126.size()*CodeSet.S126.size() + " elements"+ '\n');
 
             for (String tetraPair : resultl2)
             {
-                fw.write(tetraPair);
-                fw.write('\n');
+                fw_l2.write(tetraPair);
+                fw_l2.write('\n');
+
+                String firstElement = tetraPair.split("-")[0];
+                if (CodeSet.isAutoCompl(firstElement) && !autoComplList.contains(firstElement)) {
+                    autoComplList.add(firstElement);
+                    fw_l2_autocompl.write(firstElement);
+                    fw_l2_autocompl.write('\n');
+                }
             }
 
-            fw.close();
+            fw_l2.close();
+            fw_l2_autocompl.close();
 
         } catch (IOException e) {
             e.printStackTrace();
