@@ -51,14 +51,11 @@ public class Tetra
                 fw.write('\n');
             }
 
+            fw.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        for (String tetraPair : checkingLoopsForl3(CodeSet.S228))
-//        {
-//            System.out.println("tetra pair without cycle: " + tetraPair);
-//        }
 
     }
 
