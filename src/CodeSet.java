@@ -13,6 +13,7 @@ public class CodeSet {
     public static List<String> S12 = new ArrayList<>();
     public static List<String> S16 = new ArrayList<>();
     public static BitSet BS12 = new BitSet();
+    public static BitSet BS16 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
 
     // Singleton Stuff
@@ -79,6 +80,7 @@ public class CodeSet {
                     continue;
 
                 S16.add(line);
+                BS16.set(i);
 
                 i++;
             }
