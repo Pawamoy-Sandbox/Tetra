@@ -29,12 +29,14 @@ public class Tetra
 //        }
 //        System.out.println("=================");
 
-        for (String tetra : CodeSet.S228)
+        for (String tetra : CodeSet.S114)
         {
             System.out.println("tetra: " + tetra
                     + "\tcompl:" + CodeSet.compl(tetra)
                     + "\tAutoCompl: " + CodeSet.isAutoCompl(tetra));
         }
+
+
 
 //        for (String tetraPair : checkingLoopsForl2(CodeSet.S228))
 //        {
