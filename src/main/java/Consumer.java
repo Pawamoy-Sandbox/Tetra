@@ -10,8 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-public class Consumer implements Runnable {
+public class Consumer implements Callable<Integer> {
 
     private final List<ICombinatoricsVector<Integer>> combinatoricsVectorList;
     private final String threadName;
@@ -21,10 +22,16 @@ public class Consumer implements Runnable {
         this.combinatoricsVectorList = combinatoricsVectorList;
     }
 
-    public void run()
+    @Override
+    public Integer call() throws Exception
     {
 //        try {
 //            BufferedWriter bw = new BufferedWriter(new FileWriter(this.threadName));
+
+//            System.out.println("Calling " + threadName);
+            System.out.println("Calling " + Thread.currentThread().getName());
+
+            int validCodes = 0;
 
             for (ICombinatoricsVector<Integer> v : combinatoricsVectorList)
             {
@@ -37,9 +44,14 @@ public class Consumer implements Runnable {
                 if (!checkLoopsInTetraGraph(tetraList))
                 {
 //                    bw.write(tetraList + "\n");
-                    System.out.println(tetraList);
+                    validCodes++;
+//                    System.out.println(tetraList);
                 }
             }
+
+//            System.out.println("Closing " + threadName + " " + validCodes);
+            System.out.println("    Closing " + Thread.currentThread().getName() + " " + validCodes);
+            System.out.flush();
 
 //            bw.flush();
 //            bw.close();
@@ -47,6 +59,7 @@ public class Consumer implements Runnable {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+        return validCodes;
     }
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
