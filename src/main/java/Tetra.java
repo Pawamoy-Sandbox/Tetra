@@ -3,21 +3,43 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.paukov.combinatorics.Generator;
-import org.paukov.combinatorics.ICombinatoricsVector;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.concurrent.*;
 
 public class Tetra
 {
-    public static void main (String[] args)
-    {
+    public static void main (String[] args) throws InterruptedException {
         CodeSet.initialize();
 
-        bitSetExample();
+        long startTime = System.currentTimeMillis();
+
+        //The numbers are just silly tune parameters. Refer to the API.
+        //The important thing is, we are passing a bounded queue.
+        ExecutorService consumer = new ThreadPoolExecutor(8,8,30,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(20));
+
+        //No need to bound the queue for this executor.
+        //Use utility method instead of the complicated Constructor.
+        ExecutorService producer = Executors.newSingleThreadExecutor();
+
+        Runnable produce = new Producer(consumer);
+        producer.submit(produce);
+
+        producer.shutdown();
+        producer.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+
+        //System.out.println("Number of valid codes: " + validCodes);
+        System.out.println("Execution time: " + elapsedTime);
+
+//        bitSetExample();
 
 //        System.out.println("=================");
 //        for (int i = 0; i < 256; i++)
@@ -92,169 +114,12 @@ public class Tetra
 
     }
 
-    public static List<String> checkingLoopsForl2(List<String> tetraTreatedList)
-    {
-        int nbLoop = 0;
-
-        List<String> res = new ArrayList<>();
-
-        for (int i = 0; i < tetraTreatedList.size(); i++)
-        {
-            for (int j = 0; j < tetraTreatedList.size(); j++)
-            {
-                List<String> tetraList = new ArrayList<>();
-
-                String firstElement = tetraTreatedList.get(i);
-                String secondElement = tetraTreatedList.get(j);
-                tetraList.add(firstElement);
-                tetraList.add(secondElement);
-
-                if(checkLoopsInTetraGraph(tetraList))
-                {
-                    nbLoop++;
-                }
-                else
-                {
-                    res.add(firstElement + '-' + secondElement);
-                }
-            }
-        }
-
-        System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size() + " elements");
-
-        return res;
-    }
-
-    public static List<String> checkingLoopsForl3(List<String> tetraTreatedList)
-    {
-        int nbLoop = 0;
-
-        List<String> res = new ArrayList<>();
-
-        for (int i = 0; i < tetraTreatedList.size(); i++)
-        {
-            for (int j = 0; j < tetraTreatedList.size(); j++)
-            {
-                for (int k = 0; k < tetraTreatedList.size(); k++){
-                    List<String> tetraList = new ArrayList<>();
-
-                    String firstElement = tetraTreatedList.get(i);
-                    String secondElement = tetraTreatedList.get(j);
-                    String thirdElement = tetraTreatedList.get(k);
-                    tetraList.add(firstElement);
-                    tetraList.add(secondElement);
-                    tetraList.add(thirdElement);
-
-                    if(checkLoopsInTetraGraph(tetraList))
-                    {
-                        nbLoop++;
-                    }
-                    else
-                    {
-                        res.add(firstElement + '-' + secondElement + '-' + thirdElement);
-                    }
-                }
-            }
-        }
-
-        System.out.println(nbLoop + " loops in " + tetraTreatedList.size()*tetraTreatedList.size()*tetraTreatedList.size() + " elements");
-
-        return res;
-    }
-
-    public static void addTetraToGraph(String tetra, DirectedGraph g)
-    {
-        //simply shifting 3 times
-        //ACGT for exemple
-        //A CGT ; AC GT then ACG T
-        for (int i = 0; i < 3; i++)
-        {
-            String firstElement = tetra.substring(0, i+1);
-            String secondElement = tetra.substring(i+1);
-
-            g.addVertex(firstElement);
-            g.addVertex(secondElement);
-
-            g.addEdge(firstElement, secondElement);
-        }
-    }
-
-    public static boolean checkLoopsInTetraGraph(List<String> tetraList)
-    {
-        DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
-
-        for (String tetra : tetraList)
-        {
-            addTetraToGraph(tetra, g);
-        }
-
-        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
-
-        if (cycleDetector.detectCycles())
-        {
-            System.out.println(g.toString());
-            return true;
-        }
-
-        return false;
-    }
-
-    public static void bitSetExample()
-    {
-        BitSet bytes = new BitSet();
-
-        bytes.set(3);
-        bytes.set(7);
-        bytes.set(1);
-        bytes.set(0);
-        bytes.set(11);
-        bytes.set(11);
-        bytes.set(1000);
-
-        System.out.println("Set: " + bytes); // {0, 1, 3, 7, 11, 1000}
-        System.out.println("Set cardinality: " + bytes.cardinality()); // 4
-        System.out.println("Is 10 in the set? " + bytes.get(10)); // false
-        System.out.println("Iterating on set: ");
-        for (int i = -1; (i = bytes.nextSetBit(i + 1)) != -1; ) {
-            byte b = (byte) i;
-            System.out.print(b + " ");
-        }
-        System.out.println();
-
-        BitSet bytes2 = new BitSet();
-        bytes2.set(0);
-        bytes2.set(4);
-
+//    public static void bitSetExample()
+//    {
+//
 //        bytes.and(bytes2); // intersection
 //        bytes.andNot(bytes2); // subtraction
 //        bytes.or(bytes2); // addition
-        System.out.println("Set1: " + bytes);
-        System.out.println("Set2: " + bytes2);
-        System.out.println("Intersects: " + bytes.intersects(bytes2));
-
-
-        BitSet b3 = new BitSet();
-        b3.set(2);
-        b3.set(1);
-        System.out.println("Set3: " + b3);
-
-        List<BitSet> list = new ArrayList<>();
-        list.add(bytes2);
-        list.add(b3);
-
-        System.out.println("Is first set composed of one of the two other set? " + CodeSet.containsNotValidSubset(bytes, list));
-
-        System.out.println("============================================================");
-        System.out.println("Trying with l=60 to see exec time and memory (BS126)");
-        int i = 0, limit = 10;
-
-        Generator<Integer> gen = CodeSet.combine(CodeSet.BS126, 60);
-        for (ICombinatoricsVector<Integer> v : gen)
-        {
-            System.out.println(v.getVector());
-
-            if (++i == limit)
-                break;
-        }
-    }
+//
+//    }
 }

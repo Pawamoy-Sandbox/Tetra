@@ -29,6 +29,7 @@ public class CodeSet {
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
+    private static List<BitSet> SWrong = new ArrayList<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -229,7 +230,7 @@ public class CodeSet {
         return Factory.createSimpleCombinationGenerator(initialVector, l);
     }
 
-    public static boolean containsNotValidSubset(BitSet bitset, List<BitSet> notValidList)
+    public static boolean containsSubset(BitSet bitset, List<BitSet> bitsetList)
     {
         // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[bitset.cardinality()];
@@ -244,15 +245,43 @@ public class CodeSet {
         // Create an instance of the subset generator
         Generator<Integer> gen = Factory.createSubSetGenerator(initialSet);
 
-        for (ICombinatoricsVector<Integer> subSet : gen) {
+        for (ICombinatoricsVector<Integer> subsetVector : gen) {
+            // We only check subsets with size >= 2
+            if (subsetVector.getSize() < 2)
+                continue;
+
+            // We do not check the bitset itself since we compute
+            // wrong codes in ascending order. On length=3, we only
+            // have codes of length=2 in the list.
+            // FIXME: to avoid these 2 checks, we could write our own generator
+            // that yields subsets of length >= 2 and < bitset's cardinality
+            if (subsetVector.getSize() == bitset.cardinality())
+                continue;
+
             // Convert vector to BitSet
             BitSet subset = new BitSet();
-            for (Integer v : subSet.getVector())
+            for (Integer v : subsetVector.getVector())
                 subset.set(v);
 
-            // Check if subset is valid or not
-            if (notValidList.contains(subset))
+            // Check if subset is valid or not (contained in list)
+            if (bitsetList.contains(subset))
                 return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isValidCode(BitSet bitset)
+    {
+        return ! containsSubset(bitset, SWrong);
+    }
+
+    public static boolean addWrongCode(BitSet bitset)
+    {
+        if (! containsSubset(bitset, SWrong))
+        {
+            SWrong.add(bitset);
+            return true;
         }
 
         return false;
