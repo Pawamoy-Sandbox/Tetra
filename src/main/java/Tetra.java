@@ -1,3 +1,6 @@
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.*;
 
 public class Tetra
@@ -7,9 +10,11 @@ public class Tetra
 
         long startTime = System.currentTimeMillis();
 
-        //The numbers are just silly tune parameters. Refer to the API.
-        //The important thing is, we are passing a bounded queue.
-        ExecutorService consumer = Executors.newFixedThreadPool(8);
+        // Queue size has to be related to window size of combinations splits:
+        // we can have a 100-length queue of 1000-graph-sized threads,
+        // or a 1000-length queue of 100-graph-sized threads...
+        ExecutorService consumer = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(10));
 
         //No need to bound the queue for this executor.
         //Use utility method instead of the complicated Constructor.
@@ -19,7 +24,7 @@ public class Tetra
         Callable<Integer> produce = new Producer(completionService, consumer);
         Future<Integer> future = producer.submit(produce);
 
-        int numberOfValidCodes = 0;
+        Integer numberOfValidCodes = 0;
 
         try
         {
@@ -37,7 +42,7 @@ public class Tetra
         long elapsedTime = stopTime - startTime;
 
         System.out.println("Number of valid codes: " + numberOfValidCodes);
-        System.out.println("Execution time: " + elapsedTime);
+        System.out.println("Execution time: " + new SimpleDateFormat("mm:ss:SSS").format(new Date(elapsedTime)));
 
 
     }

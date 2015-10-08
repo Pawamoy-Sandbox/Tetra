@@ -2,6 +2,7 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -17,63 +18,76 @@ public class Producer implements Callable<Integer>
     }
 
     @Override
-    public Integer call()
-    {
+    public Integer call() throws InterruptedException {
         Generator<Integer> gen = CodeSet.combine(CodeSet.BS126, 3);
 
         int i = 0;
         int count = 0;
+        int window = 10000;
 
-//        Integer total = 0;
-//        Integer res;
+        int j = 0;
 
-//        List<Future<Integer>> futureList = new ArrayList<>();
+        Integer total = 0;
+        Integer res;
 
-        List<ICombinatoricsVector<Integer>> l  = new ArrayList<>();
+        List<BitSet> l  = new ArrayList<>();
 
         for (ICombinatoricsVector<Integer> v : gen)
         {
-            l.add(v);
+            l.add(CodeSet.vectorToBitset(v));
             count++;
+            j++;
 
-            if (count >= 10000)
+            if (count == window)
             {
-                Callable<Integer> consumer = new Consumer("Thread"+i, l);
+                Callable<Integer> consumer = new Consumer(l);
                 i++;
+                System.out.println("Number of combinations generated: " + j);
                 count = 0;
-                completionService.submit(consumer);
-//                futureList.add(completionService.submit(consumer));
+
+                boolean accepted = false;
+
+                while (! accepted)
+                {
+                    try {
+                        completionService.submit(consumer);
+                        accepted = true;
+                    } catch (RejectedExecutionException e) {
+//                        e.printStackTrace();
+                    }
+                }
+
                 l = new ArrayList<>();
             }
         }
 
         // Last iteration (copy paste) (problem with l uninitialized)
+        System.out.println("Number of combinations generated: " + j);
+        System.out.println("Last iteration list length: " + l.size() + " " + l);
 //        Callable<Integer> consumer = new Consumer("Thread"+i, l);
 //        i++;
-//        count = 0;
 //        completionService.submit(consumer);
-//        futureList.add(completionService.submit(consumer));
 
-        // Trying to get results but get ConcurrentException on take()
-        // Was the same without completionService and a list of Future
-//        try {
-//            for (int t = 0; t < i; t++)
-//            {
-//                res = completionService.take().get();
-//
-//                if (res != null)
-//                    total += res;
-//            }
-//        }
-//        catch (InterruptedException | ExecutionException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        finally
-//        {
+        // Cumulative number of valid codes
+        try {
+            for (int t = 0; t < i; t++)
+            {
+                res = completionService.take().get();
+
+                if (res != null)
+                    total += res;
+            }
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
             consumerExecutor.shutdown();
-//        }
+            consumerExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        }
 
-        return 0;
+        return total;
     }
 }

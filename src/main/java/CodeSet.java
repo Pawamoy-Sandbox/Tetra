@@ -286,4 +286,14 @@ public class CodeSet {
 
         return false;
     }
+
+    public static BitSet vectorToBitset(ICombinatoricsVector<Integer> vector)
+    {
+        BitSet b = new BitSet();
+
+        for (int i : vector.getVector())
+            b.set(i);
+
+        return b;
+    }
 }

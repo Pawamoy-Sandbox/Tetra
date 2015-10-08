@@ -9,17 +9,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 public class Consumer implements Callable<Integer> {
 
-    private final List<ICombinatoricsVector<Integer>> combinatoricsVectorList;
-    private final String threadName;
+    private final List<BitSet> bitsetList;
 
-    public Consumer(String name, List<ICombinatoricsVector<Integer>> combinatoricsVectorList) {
-        this.threadName = name;
-        this.combinatoricsVectorList = combinatoricsVectorList;
+    public Consumer(List<BitSet> bitsetList) {
+        this.bitsetList = bitsetList;
     }
 
     @Override
@@ -28,17 +27,17 @@ public class Consumer implements Callable<Integer> {
 //        try {
 //            BufferedWriter bw = new BufferedWriter(new FileWriter(this.threadName));
 
-//            System.out.println("Calling " + threadName);
-            System.out.println("Calling " + Thread.currentThread().getName());
+//            System.out.println("Calling " + Thread.currentThread().getName());
 
             int validCodes = 0;
 
-            for (ICombinatoricsVector<Integer> v : combinatoricsVectorList)
+            for (BitSet bitset : this.bitsetList)
             {
-                List<String> tetraList = new ArrayList<>();
-                for (Integer elem : v.getVector()) {
-                    String stringElem = CodeSet.byteToString(elem);
-                    tetraList.add(stringElem);
+                List<Integer> tetraList = new ArrayList<>();
+
+                for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
+                {
+                    tetraList.add(b);
                 }
 
                 if (!checkLoopsInTetraGraph(tetraList))
@@ -49,9 +48,8 @@ public class Consumer implements Callable<Integer> {
                 }
             }
 
-//            System.out.println("Closing " + threadName + " " + validCodes);
-            System.out.println("    Closing " + Thread.currentThread().getName() + " " + validCodes);
-            System.out.flush();
+//            System.out.println("    Closing " + Thread.currentThread().getName() + " " + validCodes);
+//            System.out.flush();
 
 //            bw.flush();
 //            bw.close();
@@ -64,9 +62,6 @@ public class Consumer implements Callable<Integer> {
 
     public static void addTetraToGraph(String tetra, DirectedGraph g)
     {
-        //simply shifting 3 times
-        //ACGT for exemple
-        //A CGT ; AC GT then ACG T
         for (int i = 0; i < 3; i++)
         {
             String firstElement = tetra.substring(0, i+1);
@@ -79,13 +74,33 @@ public class Consumer implements Callable<Integer> {
         }
     }
 
-    public static boolean checkLoopsInTetraGraph(List<String> tetraList)
+//    public static boolean checkLoopsInTetraGraph(List<String> tetraList)
+//    {
+//        DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+//
+//        for (String tetra : tetraList)
+//        {
+//            addTetraToGraph(tetra, g);
+//        }
+//
+//        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
+//
+//        if (cycleDetector.detectCycles())
+//        {
+////            System.out.println(g.toString());
+//            return true;
+//        }
+//
+//        return false;
+//    }
+
+    public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
     {
         DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        for (String tetra : tetraList)
+        for (Integer tetra : tetraList)
         {
-            addTetraToGraph(tetra, g);
+            addTetraToGraph(CodeSet.byteToString(tetra), g);
         }
 
         CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
