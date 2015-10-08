@@ -4,10 +4,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -24,39 +21,31 @@ public class Consumer implements Callable<Integer> {
     @Override
     public Integer call() throws Exception
     {
-//        try {
-//            BufferedWriter bw = new BufferedWriter(new FileWriter(this.threadName));
+        int validCodes = 0;
 
-//            System.out.println("Calling " + Thread.currentThread().getName());
-
-            int validCodes = 0;
-
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(Thread.currentThread().getName())), true))
+        {
             for (BitSet bitset : this.bitsetList)
             {
                 List<Integer> tetraList = new ArrayList<>();
 
                 for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
-                {
                     tetraList.add(b);
-                }
 
                 if (!checkLoopsInTetraGraph(tetraList))
                 {
-//                    bw.write(tetraList + "\n");
                     validCodes++;
-//                    System.out.println(tetraList);
+                    out.println(CodeSet.byteListToString(tetraList));
                 }
             }
 
-//            System.out.println("    Closing " + Thread.currentThread().getName() + " " + validCodes);
-//            System.out.flush();
-
-//            bw.flush();
-//            bw.close();
-
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+            out.flush();
+            out.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         return validCodes;
     }
 
@@ -74,43 +63,15 @@ public class Consumer implements Callable<Integer> {
         }
     }
 
-//    public static boolean checkLoopsInTetraGraph(List<String> tetraList)
-//    {
-//        DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
-//
-//        for (String tetra : tetraList)
-//        {
-//            addTetraToGraph(tetra, g);
-//        }
-//
-//        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
-//
-//        if (cycleDetector.detectCycles())
-//        {
-////            System.out.println(g.toString());
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
     public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
     {
         DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 
         for (Integer tetra : tetraList)
-        {
             addTetraToGraph(CodeSet.byteToString(tetra), g);
-        }
 
-        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
+        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<>(g);
 
-        if (cycleDetector.detectCycles())
-        {
-//            System.out.println(g.toString());
-            return true;
-        }
-
-        return false;
+        return cycleDetector.detectCycles();
     }
 }

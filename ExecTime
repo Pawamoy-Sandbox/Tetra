@@ -1,0 +1,6 @@
+Independant iterations:
+
+l=2: 180ms
+l=3: 1s 720ms
+l=4: 20s 640ms
+l=5: 10m 20s 770ms (took 1,1G of memory)

@@ -1,5 +1,6 @@
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
+import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -20,28 +21,26 @@ public class Producer implements Callable<Integer>
     @Override
     public Integer call() throws InterruptedException
     {
-        Generator<Integer> gen = CodeSet.combine(CodeSet.BS126, 1);
-
-        int i = 0;
+        int numberOfConsumers = 0;
         int count = 0;
+        int codeLength = 3;
+        BitSet S = CodeSet.BS126;
+
+        // NOTE: we can use apache combinatorics utils: binomialCoefficient
+//        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
         int window = 10000;
 
-        int j = 0;
-
-        Integer total = 0;
-        Integer res;
-
+        Generator<Integer> gen = CodeSet.combine(S, codeLength);
         List<BitSet> l  = new ArrayList<>();
 
         for (ICombinatoricsVector<Integer> v : gen)
         {
             l.add(CodeSet.vectorToBitset(v));
             count++;
-            j++;
 
             if (count == window)
             {
-                i++;
+                numberOfConsumers++;
                 count = 0;
                 launchConsumer(l);
                 l = new ArrayList<>();
@@ -49,14 +48,15 @@ public class Producer implements Callable<Integer>
         }
 
         // Last iteration (copy paste) (problem with l uninitialized)
-        System.out.println("Number of combinations generated: " + j);
-        System.out.println("Last iteration list length: " + l.size() + " " + l);
-        i++;
         launchConsumer(l);
+        l = null;
 
         // Cumulative number of valid codes
+        Integer total = 0;
+        Integer res;
+
         try {
-            for (int t = 0; t < i; t++)
+            for (int t = 0; t <= numberOfConsumers; t++)
             {
                 res = completionService.take().get();
 

@@ -131,8 +131,9 @@ public class CodeSet {
                 S16.add(line);
                 BS16.set(stringToByte(line));
             }
-
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
@@ -143,11 +144,11 @@ public class CodeSet {
         {
             String line;
 
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null)
                 SByteCompl.add(Integer.parseInt(line));
-            }
-
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
@@ -156,7 +157,8 @@ public class CodeSet {
     {
         StringBuilder res = new StringBuilder();
 
-        for (char ch: tetra.toCharArray()) {
+        for (char ch: tetra.toCharArray())
+        {
             char chCompl = 'A';
 
             if (ch == 'A')
@@ -198,23 +200,6 @@ public class CodeSet {
     {
         return S256.indexOf(t);
     }
-
-    // cutting big list: how many parts, which part you want, corresponding indexes
-    // not used: just keep it here in case it is needed
-//    public static Generator<Integer> combine(BitSet source, int l, int parts, int part)
-//    {
-//        int c = source.cardinality();
-//        int size = (int) (Math.pow((double) c, 2) - c) / 2;
-//        int part_size = size / parts;
-//        long exend, instart = part_size * (part-1);
-//
-//        if (parts == part)
-//            exend = size;
-//        else
-//            exend = part_size * part;
-//
-//        return combine(source, l, instart, exend);
-//    }
 
     public static Generator<Integer> combine(BitSet source, int l)
     {
@@ -297,5 +282,16 @@ public class CodeSet {
             b.set(i);
 
         return b;
+    }
+
+    public static String byteListToString(List<Integer> list)
+    {
+        // FIXME: great loss of performance here, use StringBuilder or something
+        String result = "";
+
+        for (Integer i : list)
+            result += byteToString(i) + "\t";
+
+        return result;
     }
 }
