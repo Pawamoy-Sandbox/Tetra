@@ -18,8 +18,9 @@ public class Producer implements Callable<Integer>
     }
 
     @Override
-    public Integer call() throws InterruptedException {
-        Generator<Integer> gen = CodeSet.combine(CodeSet.BS126, 3);
+    public Integer call() throws InterruptedException
+    {
+        Generator<Integer> gen = CodeSet.combine(CodeSet.BS126, 1);
 
         int i = 0;
         int count = 0;
@@ -40,23 +41,9 @@ public class Producer implements Callable<Integer>
 
             if (count == window)
             {
-                Callable<Integer> consumer = new Consumer(l);
                 i++;
-                System.out.println("Number of combinations generated: " + j);
                 count = 0;
-
-                boolean accepted = false;
-
-                while (! accepted)
-                {
-                    try {
-                        completionService.submit(consumer);
-                        accepted = true;
-                    } catch (RejectedExecutionException e) {
-//                        e.printStackTrace();
-                    }
-                }
-
+                launchConsumer(l);
                 l = new ArrayList<>();
             }
         }
@@ -64,9 +51,8 @@ public class Producer implements Callable<Integer>
         // Last iteration (copy paste) (problem with l uninitialized)
         System.out.println("Number of combinations generated: " + j);
         System.out.println("Last iteration list length: " + l.size() + " " + l);
-//        Callable<Integer> consumer = new Consumer("Thread"+i, l);
-//        i++;
-//        completionService.submit(consumer);
+        i++;
+        launchConsumer(l);
 
         // Cumulative number of valid codes
         try {
@@ -89,5 +75,24 @@ public class Producer implements Callable<Integer>
         }
 
         return total;
+    }
+
+    private void launchConsumer(List<BitSet> list)
+    {
+        Callable<Integer> consumer = new Consumer(list);
+        boolean accepted = false;
+
+        while (! accepted)
+        {
+            try
+            {
+                completionService.submit(consumer);
+                accepted = true;
+            }
+            catch (RejectedExecutionException e)
+            {
+//                e.printStackTrace();
+            }
+        }
     }
 }

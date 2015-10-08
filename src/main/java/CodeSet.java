@@ -49,6 +49,9 @@ public class CodeSet {
         readTetra16();
         readByteCompl();
 
+        S12.removeAll(S16);
+        BS12.andNot(BS16);
+
         // String sets
         S240 = new ArrayList<>(S256);
         S240.removeAll(S16);
@@ -92,7 +95,8 @@ public class CodeSet {
             String line;
 
             int i = 0;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null)
+            {
                 if (line.isEmpty())
                     continue;
 
@@ -119,15 +123,13 @@ public class CodeSet {
         {
             String line;
 
-            int i = 0;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null)
+            {
                 if (line.isEmpty())
                     continue;
 
                 S16.add(line);
-                BS16.set(i);
-
-                i++;
+                BS16.set(stringToByte(line));
             }
 
         } catch (IOException e) {
