@@ -5,8 +5,10 @@ import org.jgrapht.graph.DefaultEdge;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -31,7 +33,8 @@ public class Consumer implements Callable<Integer>
         int validCodes = 0;
         BufferedWriter bw = null;
 
-        System.out.println("Launching " + this.threadName);
+//        System.out.println("Launching " + this.threadName);
+//        long startTime = System.currentTimeMillis();
 
         try
         {
@@ -44,7 +47,7 @@ public class Consumer implements Callable<Integer>
 
                 if (! CodeSet.isValidCode(bitset))
                     continue;
-
+//
                 for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
                     tetraList.add(b);
 
@@ -75,6 +78,14 @@ public class Consumer implements Callable<Integer>
         {
             e.printStackTrace();
         }
+
+//        long stopTime = System.currentTimeMillis();
+//        long elapsedTime = stopTime - startTime;
+
+//        System.out.print("Consume time: ");
+//        System.out.print(new SimpleDateFormat("mm:ss:SSS").format(new Date(elapsedTime)));
+//        System.out.println(" - Array size: " + CodeSet.BSWrong.size());
+//        System.out.flush();
 
         return validCodes;
     }

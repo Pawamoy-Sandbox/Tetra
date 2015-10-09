@@ -28,7 +28,7 @@ public class CodeSet {
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
-    public static List<BitSet> BSWrong = new ArrayList<>();
+    public static HashMap<BitSet, Boolean> BSWrong = new HashMap<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -213,60 +213,18 @@ public class CodeSet {
     // FIXME: we really have to write our own generator method
     // that successively take tetras in S114/SC114 and S12
 
-    public class BitSetCombinerIterator implements Iterator<BitSet>
-    {
-        private final long _current_index = 0;
-        private final long _end_index;
-
-        public BitSetCombinerIterator(long end_index)
-        {
-            _end_index = end_index;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return (_current_index < _end_index);
-        }
-
-        @Override
-        public BitSet next() {
-            return null;
-        }
-    }
-
-    public class Combiner implements Iterable<BitSet>
-    {
-        private final int length;
-
-        public Combiner(int length)
-        {
-            this.length = length;
-        }
-
-        @Override
-        public Iterator<BitSet> iterator()
-        {
-            long totalCombinations = 0;
-
-            int BS12_choices;
-            int BS114_choices = length / 2;
-
-            if (length <= 12)
-                BS12_choices = length;
-            else if (length == 13)
-                BS12_choices = 11;
-            else
-                BS12_choices = 12;
-
-            for (int l = BS12_choices; l > 0; l -= 2)
-                totalCombinations += CombinatoricsUtils.binomialCoefficient(l, 12);
-
-            for (int l = BS114_choices; l > 0; l--)
-                totalCombinations += CombinatoricsUtils.binomialCoefficient(l, 114);
-
-            return new BitSetCombinerIterator(totalCombinations);
-        }
-    }
+    // Try with this Python-like generator
+//    public static io.herrmann.generator.Generator<Integer> combiner(int l)
+//    {
+//        io.herrmann.generator.Generator<Integer> g = new io.herrmann.generator.Generator<Integer>() {
+//            public void run() throws InterruptedException {
+//                // some logic here
+//                yield(1);
+//            }
+//        };
+//
+//        return g;
+//    }
 
     public static Generator<Integer> combine(BitSet source, int l)
     {
@@ -284,7 +242,7 @@ public class CodeSet {
         return Factory.createSimpleCombinationGenerator(initialVector, l);
     }
 
-    public static boolean containsSubset(BitSet bitset, List<BitSet> bitsetList)
+    public static boolean containsSubset(BitSet bitset, HashMap<BitSet, Boolean> bitsetMap)
     {
         // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[bitset.cardinality()];
@@ -317,8 +275,8 @@ public class CodeSet {
             for (Integer v : subsetVector.getVector())
                 subset.set(v);
 
-            // Check if subset is valid or not (contained in list)
-            if (bitsetList.contains(subset))
+            // Check if subset is valid or not (contained in hashmap)
+            if (bitsetMap.containsKey(subset))
                 return true;
         }
 
@@ -334,8 +292,7 @@ public class CodeSet {
     {
         if (! containsSubset(bitset, BSWrong))
         {
-            BSWrong.add(bitset);
-//            System.out.println("Added bitset " + bitset);
+            BSWrong.put(bitset, true);
             return true;
         }
 
