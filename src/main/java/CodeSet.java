@@ -1,3 +1,4 @@
+import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
@@ -5,10 +6,8 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
+import java.math.BigInteger;
+import java.util.*;
 
 public class CodeSet {
 
@@ -191,6 +190,16 @@ public class CodeSet {
         return tetra == compl(tetra);
     }
 
+//    public static boolean isAutoComplCode(BitSet bitset)
+//    {
+//        for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
+//        {
+//
+//        }
+//
+//        return false;
+//    }
+
     public static String byteToString(int t)
     {
         return S256.get(t);
@@ -199,6 +208,64 @@ public class CodeSet {
     public static int stringToByte(String t)
     {
         return S256.indexOf(t);
+    }
+
+    // FIXME: we really have to write our own generator method
+    // that successively take tetras in S114/SC114 and S12
+
+    public class BitSetCombinerIterator implements Iterator<BitSet>
+    {
+        private final long _current_index = 0;
+        private final long _end_index;
+
+        public BitSetCombinerIterator(long end_index)
+        {
+            _end_index = end_index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return (_current_index < _end_index);
+        }
+
+        @Override
+        public BitSet next() {
+            return null;
+        }
+    }
+
+    public class Combiner implements Iterable<BitSet>
+    {
+        private final int length;
+
+        public Combiner(int length)
+        {
+            this.length = length;
+        }
+
+        @Override
+        public Iterator<BitSet> iterator()
+        {
+            long totalCombinations = 0;
+
+            int BS12_choices;
+            int BS114_choices = length / 2;
+
+            if (length <= 12)
+                BS12_choices = length;
+            else if (length == 13)
+                BS12_choices = 11;
+            else
+                BS12_choices = 12;
+
+            for (int l = BS12_choices; l > 0; l -= 2)
+                totalCombinations += CombinatoricsUtils.binomialCoefficient(l, 12);
+
+            for (int l = BS114_choices; l > 0; l--)
+                totalCombinations += CombinatoricsUtils.binomialCoefficient(l, 114);
+
+            return new BitSetCombinerIterator(totalCombinations);
+        }
     }
 
     public static Generator<Integer> combine(BitSet source, int l)
@@ -268,6 +335,7 @@ public class CodeSet {
         if (! containsSubset(bitset, BSWrong))
         {
             BSWrong.add(bitset);
+//            System.out.println("Added bitset " + bitset);
             return true;
         }
 

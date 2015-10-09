@@ -10,19 +10,19 @@ public class Tetra
     public static void main (String[] args) throws InterruptedException {
         CodeSet.initialize();
 
-        // Queue size has to be related to window size of combinations splits:
-        // we can have a 100-length queue of 1000-graph-sized threads,
-        // or a 1000-length queue of 100-graph-sized threads...
-        ExecutorService consumer = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(10));
-
-        //No need to bound the queue for this executor.
-        //Use utility method instead of the complicated Constructor.
-        CompletionService<Integer> completionService = new ExecutorCompletionService<>(consumer);
-
         for (int l = 2; l < 5; l++)
         {
             long startTime = System.currentTimeMillis();
+
+            // Queue size has to be related to window size of combinations splits:
+            // we can have a 100-length queue of 1000-graph-sized threads,
+            // or a 1000-length queue of 100-graph-sized threads...
+            ExecutorService consumer = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<Runnable>(10));
+
+            //No need to bound the queue for this executor.
+            //Use utility method instead of the complicated Constructor.
+            CompletionService<Integer> completionService = new ExecutorCompletionService<>(consumer);
 
             ExecutorService producerExecutor = Executors.newSingleThreadExecutor();
             Callable<Integer> producer = new Producer(completionService, consumer, l, false);

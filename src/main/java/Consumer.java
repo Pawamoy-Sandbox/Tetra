@@ -31,6 +31,8 @@ public class Consumer implements Callable<Integer>
         int validCodes = 0;
         BufferedWriter bw = null;
 
+        System.out.println("Launching " + this.threadName);
+
         try
         {
             if (this.writeResults)
