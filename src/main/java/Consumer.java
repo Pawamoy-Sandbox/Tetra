@@ -10,24 +10,38 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class Consumer implements Callable<Integer> {
-
+public class Consumer implements Callable<Integer>
+{
     private final List<BitSet> bitsetList;
+    private final String threadName;
+    private final int codeLength;
+    private final boolean writeResults;
 
-    public Consumer(List<BitSet> bitsetList) {
+    public Consumer(String threadName, List<BitSet> bitsetList, int codeLength, boolean writeResults)
+    {
+        this.threadName = threadName;
         this.bitsetList = bitsetList;
+        this.codeLength = codeLength;
+        this.writeResults = writeResults;
     }
 
     @Override
     public Integer call() throws Exception
     {
         int validCodes = 0;
+        BufferedWriter bw = null;
 
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(Thread.currentThread().getName())), true))
+        try
         {
+            if (this.writeResults)
+                bw = new BufferedWriter(new FileWriter(this.threadName));
+
             for (BitSet bitset : this.bitsetList)
             {
                 List<Integer> tetraList = new ArrayList<>();
+
+                if (! CodeSet.isValidCode(bitset))
+                    continue;
 
                 for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
                     tetraList.add(b);
@@ -35,17 +49,31 @@ public class Consumer implements Callable<Integer> {
                 if (!checkLoopsInTetraGraph(tetraList))
                 {
                     validCodes++;
-                    out.println(CodeSet.byteListToString(tetraList));
+
+                    // FIXME: could be useful to get rid of this condition when not writing results
+                    if (bw != null)
+                    {
+                        bw.write(CodeSet.byteListToString(tetraList));
+                        bw.write("\n");
+                    }
+                }
+                else
+                {
+                    CodeSet.addWrongCode(bitset);
                 }
             }
 
-            out.flush();
-            out.close();
+            if (bw != null)
+            {
+                bw.flush();
+                bw.close();
+            }
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+
         return validCodes;
     }
 

@@ -29,7 +29,7 @@ public class CodeSet {
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
-    private static List<BitSet> SWrong = new ArrayList<>();
+    public static List<BitSet> BSWrong = new ArrayList<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -260,14 +260,14 @@ public class CodeSet {
 
     public static boolean isValidCode(BitSet bitset)
     {
-        return ! containsSubset(bitset, SWrong);
+        return ! containsSubset(bitset, BSWrong);
     }
 
     public static boolean addWrongCode(BitSet bitset)
     {
-        if (! containsSubset(bitset, SWrong))
+        if (! containsSubset(bitset, BSWrong))
         {
-            SWrong.add(bitset);
+            BSWrong.add(bitset);
             return true;
         }
 

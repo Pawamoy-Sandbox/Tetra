@@ -11,11 +11,15 @@ public class Producer implements Callable<Integer>
 {
     private final ExecutorService consumerExecutor;
     private final CompletionService<Integer> completionService;
+    private final int codeLength;
+    private final boolean writeResults;
 
-    public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor)
+    public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength, boolean writeResults)
     {
         this.completionService = completionService;
         this.consumerExecutor = consumerExecutor;
+        this.codeLength = codeLength;
+        this.writeResults = writeResults;
     }
 
     @Override
@@ -23,7 +27,6 @@ public class Producer implements Callable<Integer>
     {
         int numberOfConsumers = 0;
         int count = 0;
-        int codeLength = 3;
         BitSet S = CodeSet.BS126;
 
         // NOTE: we can use apache combinatorics utils: binomialCoefficient
@@ -42,20 +45,21 @@ public class Producer implements Callable<Integer>
             {
                 numberOfConsumers++;
                 count = 0;
-                launchConsumer(l);
+                launchConsumer("Thread"+numberOfConsumers, l);
                 l = new ArrayList<>();
             }
         }
 
         // Last iteration (copy paste) (problem with l uninitialized)
-        launchConsumer(l);
+        launchConsumer("Thread"+(numberOfConsumers+1), l);
         l = null;
 
         // Cumulative number of valid codes
         Integer total = 0;
         Integer res;
 
-        try {
+        try
+        {
             for (int t = 0; t <= numberOfConsumers; t++)
             {
                 res = completionService.take().get();
@@ -77,9 +81,9 @@ public class Producer implements Callable<Integer>
         return total;
     }
 
-    private void launchConsumer(List<BitSet> list)
+    private void launchConsumer(String threadName, List<BitSet> list)
     {
-        Callable<Integer> consumer = new Consumer(list);
+        Callable<Integer> consumer = new Consumer(threadName, list, codeLength, writeResults);
         boolean accepted = false;
 
         while (! accepted)
@@ -89,10 +93,7 @@ public class Producer implements Callable<Integer>
                 completionService.submit(consumer);
                 accepted = true;
             }
-            catch (RejectedExecutionException e)
-            {
-//                e.printStackTrace();
-            }
+            catch (RejectedExecutionException ignored) {}
         }
     }
 }
