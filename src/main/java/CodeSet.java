@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CodeSet {
 
@@ -28,7 +29,7 @@ public class CodeSet {
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<Integer> SByteCompl = new ArrayList<>();
-    public static HashMap<BitSet, Boolean> BSWrong = new HashMap<>();
+    public static ConcurrentHashMap<BitSet, Boolean> BSWrong = new ConcurrentHashMap<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -242,7 +243,7 @@ public class CodeSet {
         return Factory.createSimpleCombinationGenerator(initialVector, l);
     }
 
-    public static boolean containsSubset(BitSet bitset, HashMap<BitSet, Boolean> bitsetMap)
+    public static boolean containsSubset(BitSet bitset, ConcurrentHashMap<BitSet, Boolean> bitsetMap)
     {
         // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[bitset.cardinality()];

@@ -39,12 +39,14 @@ public class Tetra
 
         try
         {
-            launchLoop(2, 6);
+            launchLoop(1, 13);
         }
         catch (InterruptedException e)
         {
             e.printStackTrace();
         }
+
+        System.out.println(CodeSet.BSWrong);
     }
 
     private static void launchLoop(int start, int end) throws InterruptedException
@@ -84,7 +86,7 @@ public class Tetra
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
 
-            long total = CombinatoricsUtils.binomialCoefficient(126, l);
+            long total = CombinatoricsUtils.binomialCoefficient(12, l);
             float percent = (float) numberOfValidCodes / (float) total * 100;
 
             System.out.print(String.format("%1$23s", l + " | "));

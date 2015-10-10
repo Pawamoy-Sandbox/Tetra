@@ -27,7 +27,7 @@ public class Producer implements Callable<Integer>
     {
         int numberOfConsumers = 0;
         int count = 0;
-        BitSet S = CodeSet.BS126;
+        BitSet S = CodeSet.BS12;
 
         // NOTE: we can use apache combinatorics utils: binomialCoefficient
 //        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
