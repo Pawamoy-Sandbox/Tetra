@@ -28,6 +28,7 @@ public class CodeSet {
     public static BitSet BSC114 = new BitSet();
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
+    public static List<List<BitSet>> ValidBS12 = new ArrayList<>();
     public static List<Integer> SByteCompl = new ArrayList<>();
     public static ConcurrentHashMap<BitSet, Boolean> BSWrong = new ConcurrentHashMap<>();
 
@@ -48,6 +49,7 @@ public class CodeSet {
         readTetra256();
         readTetra16();
         readByteCompl();
+        readValidS12();
 
         S12.removeAll(S16);
         BS12.andNot(BS16);
@@ -90,7 +92,7 @@ public class CodeSet {
 
     private static void readTetra256()
     {
-        try (BufferedReader br = new BufferedReader(new FileReader("tetra256.txt")))
+        try (BufferedReader br = new BufferedReader(new FileReader("data/S256.txt")))
         {
             String line;
 
@@ -119,7 +121,7 @@ public class CodeSet {
 
     private static void readTetra16()
     {
-        try (BufferedReader br = new BufferedReader(new FileReader("tetra16.txt")))
+        try (BufferedReader br = new BufferedReader(new FileReader("data/S16.txt")))
         {
             String line;
 
@@ -138,9 +140,39 @@ public class CodeSet {
         }
     }
 
+    private static void readValidS12()
+    {
+        for (int i = 1; i <= 6; i++)
+        {
+            ArrayList<BitSet> validCodes = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader("data/L" + i + "ValidS12.txt"))) {
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    if (line.isEmpty())
+                        continue;
+
+                    String[] tetras = line.split("\t");
+
+                    BitSet code = new BitSet();
+
+                    for (int j = 0; j < i; j++)
+                        code.set(stringToByte(tetras[j]));
+
+                    validCodes.add(code);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            ValidBS12.add(validCodes);
+        }
+    }
+
     private static void readByteCompl()
     {
-        try (BufferedReader br = new BufferedReader(new FileReader("byteCompl.txt")))
+        try (BufferedReader br = new BufferedReader(new FileReader("data/BS256Complement.txt")))
         {
             String line;
 

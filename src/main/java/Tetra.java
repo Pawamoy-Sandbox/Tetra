@@ -1,32 +1,19 @@
 import com.sun.org.apache.bcel.internal.classfile.Code;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
+import java.io.File;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class Tetra
 {
     public static void main (String[] args) {
         CodeSet.initialize();
-
-//        BitSet hey = new BitSet();
-//        hey.set(1);
-//        hey.set(2);
-//        hey.set(6);
-//        hey.set(8);
-//
-//        System.out.println(hey.get(1, 3));
-
-//        Combiner combiner = new Combiner(1);
-//
-//        for (BitSet b : combiner)
-//        {
-//            System.out.println(b);
-//        }
 
         System.out.print(String.format("%1$23s", "Code length | "));
         System.out.print(String.format("%1$35s", "Number of valid codes | "));
@@ -37,22 +24,31 @@ public class Tetra
         System.out.print("------------------------------");
         System.out.println("------------------------------");
 
-        try
+        for (int i = 0; i < CodeSet.ValidBS12.size(); i++)
         {
-            launchLoop(1, 13);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
+            for (int j = 0; j < CodeSet.ValidBS12.get(i).size(); j++)
+            {
+                System.out.println(CodeSet.ValidBS12.get(i).get(j));
+            }
         }
 
-        System.out.println(CodeSet.BSWrong);
+//        try
+//        {
+//            launchLoop(1, 4);
+//        }
+//        catch (InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
     }
 
     private static void launchLoop(int start, int end) throws InterruptedException
     {
         for (int l = start; l < end; l++)
         {
+            File LDir = new File("Results/L" + l);
+            LDir.mkdirs();
+
             // Queue size has to be related to window size of combinations splits:
             // we can have a 100-length queue of 1000-graph-sized threads,
             // or a 1000-length queue of 100-graph-sized threads...
@@ -64,7 +60,7 @@ public class Tetra
             CompletionService<Integer> completionService = new ExecutorCompletionService<>(consumer);
 
             ExecutorService producerExecutor = Executors.newSingleThreadExecutor();
-            Callable<Integer> producer = new Producer(completionService, consumer, l, false);
+            Callable<Integer> producer = new Producer(completionService, consumer, l);
 
             long startTime = System.currentTimeMillis();
             Future<Integer> future = producerExecutor.submit(producer);
@@ -86,11 +82,13 @@ public class Tetra
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
 
-            long total = CombinatoricsUtils.binomialCoefficient(12, l);
-            float percent = (float) numberOfValidCodes / (float) total * 100;
+            // Too high value with 256, generates exception
+//            long total = CombinatoricsUtils.binomialCoefficient(256, l);
+//            float percent = (float) numberOfValidCodes / (float) total * 100;
 
             System.out.print(String.format("%1$23s", l + " | "));
-            System.out.print(String.format("%1$35s", numberOfValidCodes + "/" + total + " (" + percent + "%) | "));
+//            System.out.print(String.format("%1$35s", numberOfValidCodes + "/" + total + " (" + percent + "%) | "));
+            System.out.print(String.format("%1$35s", numberOfValidCodes + " | "));
             System.out.print(String.format("%1$23s", CodeSet.BSWrong.size() + " | "));
             System.out.println(String.format("%1$23s", new SimpleDateFormat("mm:ss:SSS").format(new Date(elapsedTime)) + " |"));
         }

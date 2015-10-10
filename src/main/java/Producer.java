@@ -12,14 +12,12 @@ public class Producer implements Callable<Integer>
     private final ExecutorService consumerExecutor;
     private final CompletionService<Integer> completionService;
     private final int codeLength;
-    private final boolean writeResults;
 
-    public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength, boolean writeResults)
+    public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength)
     {
         this.completionService = completionService;
         this.consumerExecutor = consumerExecutor;
         this.codeLength = codeLength;
-        this.writeResults = writeResults;
     }
 
     @Override
@@ -27,7 +25,7 @@ public class Producer implements Callable<Integer>
     {
         int numberOfConsumers = 0;
         int count = 0;
-        BitSet S = CodeSet.BS12;
+        BitSet S = CodeSet.BS114;
 
         // NOTE: we can use apache combinatorics utils: binomialCoefficient
 //        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
@@ -45,13 +43,13 @@ public class Producer implements Callable<Integer>
             {
                 numberOfConsumers++;
                 count = 0;
-                launchConsumer("Thread"+numberOfConsumers, l);
+                launchConsumer("Results/L" + codeLength + "/Thread"+numberOfConsumers + ".txt", l);
                 l = new ArrayList<>();
             }
         }
 
         // Last iteration (copy paste) (problem with l uninitialized)
-        launchConsumer("Thread"+(numberOfConsumers+1), l);
+        launchConsumer("Results/L" + codeLength + "/Thread"+(numberOfConsumers+1) + ".txt", l);
         l = null;
 
         // Cumulative number of valid codes
@@ -83,7 +81,7 @@ public class Producer implements Callable<Integer>
 
     private void launchConsumer(String threadName, List<BitSet> list)
     {
-        Callable<Integer> consumer = new Consumer(threadName, list, codeLength, writeResults);
+        Callable<Integer> consumer = new Consumer(threadName, list);
         boolean accepted = false;
 
         while (! accepted)

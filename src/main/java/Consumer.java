@@ -16,15 +16,13 @@ public class Consumer implements Callable<Integer>
 {
     private final List<BitSet> bitsetList;
     private final String threadName;
-    private final int codeLength;
-    private final boolean writeResults;
+    // Using a final tells the Java Compiler to use only one condition-branch (-> faster execution)
+    private static final boolean writeResults = false;
 
-    public Consumer(String threadName, List<BitSet> bitsetList, int codeLength, boolean writeResults)
+    public Consumer(String threadName, List<BitSet> bitsetList)
     {
         this.threadName = threadName;
         this.bitsetList = bitsetList;
-        this.codeLength = codeLength;
-        this.writeResults = writeResults;
     }
 
     @Override
@@ -33,13 +31,18 @@ public class Consumer implements Callable<Integer>
         int validCodes = 0;
         BufferedWriter bw = null;
 
-//        System.out.println("Launching " + this.threadName);
-//        long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
 
         try
         {
-            if (this.writeResults)
+            if (writeResults)
+            {
                 bw = new BufferedWriter(new FileWriter(this.threadName));
+                if (bw == null) {
+                    System.out.println(this.threadName + ": problem while opening FileWriter; Stopping thread.");
+                    return 0;
+                }
+            }
 
             for (BitSet bitset : this.bitsetList)
             {
@@ -55,8 +58,7 @@ public class Consumer implements Callable<Integer>
                 {
                     validCodes++;
 
-                    // FIXME: could be useful to get rid of this condition when not writing results
-                    if (bw != null)
+                    if (writeResults)
                     {
                         bw.write(CodeSet.byteListToString(tetraList));
                         bw.write("\n");
@@ -68,7 +70,7 @@ public class Consumer implements Callable<Integer>
                 }
             }
 
-            if (bw != null)
+            if (writeResults)
             {
                 bw.flush();
                 bw.close();
@@ -79,8 +81,8 @@ public class Consumer implements Callable<Integer>
             e.printStackTrace();
         }
 
-//        long stopTime = System.currentTimeMillis();
-//        long elapsedTime = stopTime - startTime;
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
 
 //        System.out.print("Consume time: ");
 //        System.out.print(new SimpleDateFormat("mm:ss:SSS").format(new Date(elapsedTime)));
