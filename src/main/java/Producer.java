@@ -12,6 +12,10 @@ public class Producer implements Callable<Integer>
     private final ExecutorService consumerExecutor;
     private final CompletionService<Integer> completionService;
     private final int codeLength;
+    private List<BitSet> buffer;
+    private int count = 0;
+    private int numberOfConsumers= 0;
+    private int window = 10000;
 
     public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength)
     {
@@ -23,34 +27,48 @@ public class Producer implements Callable<Integer>
     @Override
     public Integer call() throws InterruptedException
     {
-        int numberOfConsumers = 0;
-        int count = 0;
-        BitSet S = CodeSet.BS114;
-
         // NOTE: we can use apache combinatorics utils: binomialCoefficient
 //        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
-        int window = 10000;
+        int BS12_choices;
 
-        Generator<Integer> gen = CodeSet.combine(S, codeLength);
-        List<BitSet> l  = new ArrayList<>();
+        if (codeLength <= 6)
+            BS12_choices = codeLength;
+        else if (codeLength % 2 == 0)
+            BS12_choices = 6;
+        else
+            BS12_choices = 5;
 
-        for (ICombinatoricsVector<Integer> v : gen)
+        buffer = new ArrayList<>();
+        List<BitSet> validS12;
+
+        for (int i = BS12_choices; i >= 0; i -= 2)
         {
-            l.add(CodeSet.vectorToBitset(v));
-            count++;
+            int spaceLeft = codeLength - i;
 
-            if (count == window)
+            for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, spaceLeft / 2))
             {
-                numberOfConsumers++;
-                count = 0;
-                launchConsumer("Results/L" + codeLength + "/Thread"+numberOfConsumers + ".txt", l);
-                l = new ArrayList<>();
+                if (i > 0)
+                {
+                    validS12 = CodeSet.ValidBS12.get(i-1);
+
+                    for (BitSet bs12 : validS12)
+                    {
+                        BitSet b = new BitSet();
+                        b.or(bs12);
+                        addInBuffer(b, v.getVector());
+                    }
+                }
+                else
+                {
+                    BitSet b = new BitSet();
+                    addInBuffer(b, v.getVector());
+                }
             }
         }
 
         // Last iteration (copy paste) (problem with l uninitialized)
-        launchConsumer("Results/L" + codeLength + "/Thread"+(numberOfConsumers+1) + ".txt", l);
-        l = null;
+        launchConsumer("Results/L" + codeLength + "/Thread"+(numberOfConsumers+1) + ".txt", buffer);
+        buffer = null;
 
         // Cumulative number of valid codes
         Integer total = 0;
@@ -92,6 +110,26 @@ public class Producer implements Callable<Integer>
                 accepted = true;
             }
             catch (RejectedExecutionException ignored) {}
+        }
+    }
+
+    private void addInBuffer(BitSet b, List<Integer> vector)
+    {
+        for (Integer bit : vector)
+        {
+            b.set(bit);
+            b.set(CodeSet.compl(bit));
+        }
+
+        buffer.add(b);
+        count++;
+
+        if (count == window)
+        {
+            numberOfConsumers++;
+            count = 0;
+            launchConsumer("Results/L" + codeLength + "/Thread" + numberOfConsumers + ".txt", buffer);
+            buffer = new ArrayList<>();
         }
     }
 }
