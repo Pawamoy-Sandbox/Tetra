@@ -13,7 +13,7 @@ public class Producer implements Callable<Integer>
     private List<BitSet> buffer;
     private int count = 0;
     private int numberOfConsumers= 0;
-    private int window = 10000;
+    private final int window = 10000;
 
     public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength)
     {

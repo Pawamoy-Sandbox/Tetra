@@ -45,7 +45,7 @@ public class Consumer implements Callable<Integer>
 
                 if (! CodeSet.isValidCode(bitset))
                     continue;
-//
+
                 for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
                     tetraList.add(b);
 

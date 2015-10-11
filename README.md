@@ -19,6 +19,7 @@ Fonction de croissance des codes circulaires de tétranucléotides autocompléme
 - Compression des résultats (écriture de fichiers compressés)
 - Découpage de la HashMap en plusieurs HashMap (une par longueur de code) ?
   Un petit test a montré que le temps d'accès à l'élément d'une HashMap de 100.000+ est inférieur à 1ms
+- Construction des chaînes de caractères (éviter les recopies via +)
 
 ## Questions
 

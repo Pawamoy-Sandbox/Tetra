@@ -221,16 +221,6 @@ public class CodeSet {
         return tetra == compl(tetra);
     }
 
-//    public static boolean isAutoComplCode(BitSet bitset)
-//    {
-//        for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
-//        {
-//
-//        }
-//
-//        return false;
-//    }
-
     public static String byteToString(int t)
     {
         return S256.get(t);
@@ -240,22 +230,6 @@ public class CodeSet {
     {
         return S256.indexOf(t);
     }
-
-    // FIXME: we really have to write our own generator method
-    // that successively take tetras in S114/SC114 and S12
-
-    // Try with this Python-like generator
-//    public static io.herrmann.generator.Generator<Integer> combiner(int l)
-//    {
-//        io.herrmann.generator.Generator<Integer> g = new io.herrmann.generator.Generator<Integer>() {
-//            public void run() throws InterruptedException {
-//                // some logic here
-//                yield(1);
-//            }
-//        };
-//
-//        return g;
-//    }
 
     public static Generator<Integer> combine(BitSet source, int l)
     {
