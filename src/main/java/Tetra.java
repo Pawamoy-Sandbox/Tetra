@@ -1,4 +1,7 @@
+import org.apache.commons.math3.util.CombinatoricsUtils;
+
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
@@ -10,7 +13,7 @@ public class Tetra
 
         System.out.print(String.format("%1$18s", "Code length | "));
         System.out.print(String.format("%1$35s", "Number of valid codes | "));
-        System.out.print(String.format("%1$23s", "Size of wrong array | "));
+        System.out.print(String.format("%1$23s", "Size of hashmap | "));
         System.out.print(String.format("%1$18s", "Execution time |"));
         System.out.println();
         System.out.print("----------------|-");
@@ -70,14 +73,13 @@ public class Tetra
             long elapsedTime = stopTime - startTime;
 
             // Too high value with 256, generates exception
-//            long total = CombinatoricsUtils.binomialCoefficient(256, l);
-//            float percent = (float) numberOfValidCodes / (float) total * 100;
+            BigDecimal total = BigDecimal.valueOf(CombinatoricsUtils.binomialCoefficient(256, l));
+//            float percent = BigDecimal.valueOf(numberOfValidCodes).divide(total, 3, RoundingMode.CEILING).floatValue() * 100;
 
             System.out.print(String.format("%1$18s", l + " | "));
-//            System.out.print(String.format("%1$35s", numberOfValidCodes + "/" + total + " (" + percent + "%) | "));
-            System.out.print(String.format("%1$35s", numberOfValidCodes + " | "));
+            System.out.print(String.format("%1$35s", numberOfValidCodes + "/" + total + /*" (" + percent + "%)" + */" | "));
             System.out.print(String.format("%1$23s", CodeSet.BSWrong.size() + " | "));
-            System.out.println(String.format("%1$18s", new SimpleDateFormat("mm:ss:SSS").format(new Date(elapsedTime)) + " |"));
+            System.out.println(String.format("%1$18s", new SimpleDateFormat("HH:mm:ss:SSS").format(new Date(elapsedTime-1000*3600)) + " |"));
         }
     }
 }

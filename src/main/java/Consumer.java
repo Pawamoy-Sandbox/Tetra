@@ -2,13 +2,10 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -30,8 +27,6 @@ public class Consumer implements Callable<Integer>
     {
         int validCodes = 0;
         BufferedWriter bw = null;
-
-        long startTime = System.currentTimeMillis();
 
         try
         {
@@ -80,14 +75,6 @@ public class Consumer implements Callable<Integer>
         {
             e.printStackTrace();
         }
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-
-//        System.out.print("Consume time: ");
-//        System.out.print(new SimpleDateFormat("mm:ss:SSS").format(new Date(elapsedTime)));
-//        System.out.println(" - Array size: " + CodeSet.BSWrong.size());
-//        System.out.flush();
 
         return validCodes;
     }

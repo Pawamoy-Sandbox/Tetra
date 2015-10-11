@@ -1,4 +1,3 @@
-import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
@@ -6,7 +5,6 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

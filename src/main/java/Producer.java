@@ -1,6 +1,4 @@
-import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
-import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import java.util.ArrayList;
 import java.util.BitSet;
