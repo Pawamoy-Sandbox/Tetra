@@ -24,7 +24,7 @@ public class Tetra
 
         try
         {
-            launchLoop(1, 8);
+            launchLoop(2, 8);
         }
         catch (InterruptedException e)
         {

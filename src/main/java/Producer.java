@@ -28,43 +28,47 @@ public class Producer implements Callable<Integer>
         // NOTE: we can use apache combinatorics utils: binomialCoefficient
 //        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
         int BS12_choices;
+        boolean even = false;
 
         if (codeLength <= 6)
             BS12_choices = codeLength;
         else if (codeLength % 2 == 0)
+        {
             BS12_choices = 6;
+            even = true;
+        }
         else
             BS12_choices = 5;
 
         buffer = new ArrayList<>();
-        List<BitSet> validS12;
 
-        for (int i = BS12_choices; i >= 0; i -= 2)
+        // With tetras from S12
+        for (int i = BS12_choices; i > 0; i -= 2)
         {
-            int spaceLeft = codeLength - i;
+            List<BitSet> validS12 = CodeSet.ValidBS12.get(i-1);
 
-            for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, spaceLeft / 2))
+            for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, (codeLength - i) / 2))
             {
-                if (i > 0)
-                {
-                    validS12 = CodeSet.ValidBS12.get(i-1);
-
-                    for (BitSet bs12 : validS12)
-                    {
-                        BitSet b = new BitSet();
-                        b.or(bs12);
-                        addInBuffer(b, v.getVector());
-                    }
-                }
-                else
+                for (BitSet bs12 : validS12)
                 {
                     BitSet b = new BitSet();
+                    b.or(bs12);
                     addInBuffer(b, v.getVector());
                 }
             }
         }
 
-        // Last iteration (copy paste) (problem with l uninitialized)
+        // Without tetras from S12 (only when codeLength is even)
+        if (even)
+        {
+            for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, codeLength / 2))
+            {
+                BitSet b = new BitSet();
+                addInBuffer(b, v.getVector());
+            }
+        }
+
+        // Last iteration
         launchConsumer("Results/L" + codeLength + "/Thread"+(numberOfConsumers+1) + ".txt", buffer);
         buffer = null;
 
@@ -76,6 +80,7 @@ public class Producer implements Callable<Integer>
         {
             for (int t = 0; t <= numberOfConsumers; t++)
             {
+                // Get result as soon as it comes
                 res = completionService.take().get();
 
                 if (res != null)
