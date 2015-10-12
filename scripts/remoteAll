@@ -1,0 +1,7 @@
+#!/bin/bash
+
+[ $# -eq 0 ] && { echo "usage: $0 turing_username" >&2; exit 1; }
+./scripts/makeForTuring
+
+scp tetranucleo.tar.gz $1@turing.u-strasbg.fr:~
+ssh $1@turing.u-strasbg.fr 'tar xvzf tetranucleo.tar.gz; cd tetranucleo; java -jar tetranucleo.jar & pid=$!; echo; echo "Process ID: $pid"; echo'

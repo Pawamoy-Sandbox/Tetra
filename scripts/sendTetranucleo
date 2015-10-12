@@ -1,0 +1,4 @@
+#!/bin/bash
+
+[ $# -eq 0 ] && { echo "usage: $0 turing_username" >&2; exit 1; }
+scp tetranucleo.tar.gz $1@turing.u-strasbg.fr:~

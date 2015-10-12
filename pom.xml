@@ -10,13 +10,6 @@
     <name>Maven Quick Start Archetype</name>
     <url>http://maven.apache.org</url>
 
-    <repositories>
-        <repository>
-            <id>java-generator-functions</id>
-            <url>http://dl.bintray.com/filipmalczak/maven</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.jgrapht</groupId>
@@ -34,16 +27,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.herrmann</groupId>
-            <artifactId>java-generator-functions</artifactId>
-            <version>1.0</version>
         </dependency>
     </dependencies>
 

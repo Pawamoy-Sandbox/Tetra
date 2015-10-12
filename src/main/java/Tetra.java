@@ -24,7 +24,7 @@ public class Tetra
 
         try
         {
-            launchLoop(1, 60);
+            launchLoop(1, 8);
         }
         catch (InterruptedException e)
         {
@@ -34,6 +34,9 @@ public class Tetra
 
     private static void launchLoop(int start, int end) throws InterruptedException
     {
+        int numThreads = 8;
+        int queueSize = 12;
+
         for (int l = start; l < end; l++)
         {
             File LDir = new File("Results/L" + l);
@@ -42,8 +45,9 @@ public class Tetra
             // Queue size has to be related to window size of combinations splits:
             // we can have a 100-length queue of 1000-graph-sized threads,
             // or a 1000-length queue of 100-graph-sized threads...
-            ExecutorService consumer = new ThreadPoolExecutor(8, 8, 0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(10));
+            ExecutorService consumer = new ThreadPoolExecutor(
+                    numThreads, numThreads, 0L, TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<Runnable>(queueSize));
 
             //No need to bound the queue for this executor.
             //Use utility method instead of the complicated Constructor.
