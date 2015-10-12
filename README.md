@@ -20,6 +20,8 @@ Fonction de croissance des codes circulaires de tétranucléotides autocompléme
 - Découpage de la HashMap en plusieurs HashMap (une par longueur de code) ?
   Un petit test a montré que le temps d'accès à l'élément d'une HashMap de 100.000+ est inférieur à 1ms
 - Construction des chaînes de caractères (éviter les recopies via +)
+- Une HashMap globale en lecture seule, une HashMap par consommateur en écriture,
+  fusion des HashMap partielle dans la globale à la fin des threads (plus sécurisé/rapide?) 
 
 ## Questions
 
