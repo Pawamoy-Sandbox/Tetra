@@ -28,15 +28,12 @@ public class Producer implements Callable<Integer>
         // NOTE: we can use apache combinatorics utils: binomialCoefficient
 //        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
         int BS12_choices;
-        boolean even = false;
+        boolean even = (codeLength % 2 == 0);
 
         if (codeLength <= 6)
             BS12_choices = codeLength;
-        else if (codeLength % 2 == 0)
-        {
+        else if (even)
             BS12_choices = 6;
-            even = true;
-        }
         else
             BS12_choices = 5;
 
