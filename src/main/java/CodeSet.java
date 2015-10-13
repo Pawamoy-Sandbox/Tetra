@@ -247,8 +247,22 @@ public class CodeSet {
         return Factory.createSimpleCombinationGenerator(initialVector, l);
     }
 
+    public static int getIntersectionSize(BitSet bits1, BitSet bits2) {
+        BitSet copy = (BitSet) bits1.clone();
+        copy.and(bits2);
+        return copy.cardinality();
+    }
+
     public static boolean containsSubset(BitSet bitset, ConcurrentHashMap<BitSet, Boolean> bitsetMap)
     {
+        /*
+        for (BitSet nonvalidSet : bitsetMap.keySet()) {
+            if (getIntersectionSize(bitset, nonvalidSet) >= nonvalidSet.cardinality())
+                return true;
+        }
+        */
+
+
         // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[bitset.cardinality()];
 
@@ -284,7 +298,6 @@ public class CodeSet {
             if (bitsetMap.containsKey(subset))
                 return true;
         }
-
         return false;
     }
 
@@ -312,6 +325,37 @@ public class CodeSet {
             b.set(i);
 
         return b;
+    }
+
+
+    public static int aminoAcidValue(char c) {
+        if (c == 'A') {
+            return 1;
+        }
+        if (c == 'C') {
+            return 2;
+        }
+        if (c == 'G') {
+            return 3;
+        }
+        if (c == 'T') {
+            return 4;
+        }
+
+        return 0;
+    }
+
+    public static int stringToTetraSubset(String subTetra, int start, int end)
+    {
+        int result = 0;
+
+        int exp = 0;
+        for (int i = start; i < end; i++) {
+            result += aminoAcidValue(subTetra.charAt(i)) * (Math.pow(10, exp));
+            exp++;
+        }
+
+        return result;
     }
 
     public static String byteListToString(List<Integer> list)

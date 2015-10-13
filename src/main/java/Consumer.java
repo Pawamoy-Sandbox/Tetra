@@ -83,8 +83,8 @@ public class Consumer implements Callable<Integer>
     {
         for (int i = 0; i < 3; i++)
         {
-            String firstElement = tetra.substring(0, i+1);
-            String secondElement = tetra.substring(i+1);
+            int firstElement = CodeSet.stringToTetraSubset(tetra, 0, i + 1);
+            int secondElement = CodeSet.stringToTetraSubset(tetra, i + 1, tetra.length());
 
             g.addVertex(firstElement);
             g.addVertex(secondElement);
@@ -95,12 +95,12 @@ public class Consumer implements Callable<Integer>
 
     public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
     {
-        DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+        DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 
         for (Integer tetra : tetraList)
             addTetraToGraph(CodeSet.byteToString(tetra), g);
 
-        CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<>(g);
+        CycleDetector<Integer, DefaultEdge> cycleDetector = new CycleDetector<>(g);
 
         return cycleDetector.detectCycles();
     }
