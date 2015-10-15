@@ -29,6 +29,7 @@ public class CodeSet {
     public static List<List<BitSet>> ValidBS12 = new ArrayList<>();
     public static List<Integer> SByteCompl = new ArrayList<>();
     public static ConcurrentHashMap<BitSet, Boolean> BSWrong = new ConcurrentHashMap<>();
+    public static List<List<List<Integer>>> Splits = new ArrayList<>();
 
     // Singleton Stuff
     private static class SingletonHolder
@@ -48,6 +49,7 @@ public class CodeSet {
         readTetra16();
         readByteCompl();
         readValidS12();
+        readSplits();
 
         S12.removeAll(S16);
         BS12.andNot(BS16);
@@ -176,6 +178,37 @@ public class CodeSet {
 
             while ((line = br.readLine()) != null)
                 SByteCompl.add(Integer.parseInt(line));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static void readSplits()
+    {
+        try (BufferedReader br = new BufferedReader(new FileReader("data/TetraSplit.txt")))
+        {
+            String line;
+
+            while ((line = br.readLine()) != null)
+            {
+                String[] parts = line.split("\t");
+
+                List<List<Integer>> list = new ArrayList<>();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    List<Integer> subList = new ArrayList<>();
+
+                    subList.add(Integer.valueOf(parts[i*2 + 1]));
+                    subList.add(Integer.valueOf(parts[i*2 + 2]));
+
+                    list.add(subList);
+                }
+
+                Splits.add(list);
+            }
         }
         catch (IOException e)
         {
@@ -367,5 +400,107 @@ public class CodeSet {
             result += byteToString(i) + "\t";
 
         return result;
+    }
+
+    public static void printSplittedTetra()
+    {
+        for (String tetra : CodeSet.S256)
+        {
+            System.out.print(tetra + "\t");
+            for (int i = 0; i < 3; i++)
+            {
+                System.out.print(CodeSet.toInt(tetra.substring(0, i + 1)) + "\t");
+                System.out.print(CodeSet.toInt(tetra.substring(i + 1)) + "\t");
+            }
+            System.out.println();
+        }
+    }
+    public static int toInt(String tetraPart)
+    {
+        if (tetraPart.equals("A")) return 0;
+        if (tetraPart.equals("C")) return 1;
+        if (tetraPart.equals("G")) return 2;
+        if (tetraPart.equals("T")) return 3;
+        if (tetraPart.equals("AA")) return 4;
+        if (tetraPart.equals("AC")) return 5;
+        if (tetraPart.equals("AG")) return 6;
+        if (tetraPart.equals("AT")) return 7;
+        if (tetraPart.equals("CA")) return 8;
+        if (tetraPart.equals("CC")) return 9;
+        if (tetraPart.equals("CG")) return 10;
+        if (tetraPart.equals("CT")) return 11;
+        if (tetraPart.equals("GA")) return 12;
+        if (tetraPart.equals("GC")) return 13;
+        if (tetraPart.equals("GG")) return 14;
+        if (tetraPart.equals("GT")) return 15;
+        if (tetraPart.equals("TA")) return 16;
+        if (tetraPart.equals("TC")) return 17;
+        if (tetraPart.equals("TG")) return 18;
+        if (tetraPart.equals("TT")) return 19;
+        if (tetraPart.equals("AAA")) return 20;
+        if (tetraPart.equals("AAC")) return 21;
+        if (tetraPart.equals("AAG")) return 22;
+        if (tetraPart.equals("AAT")) return 23;
+        if (tetraPart.equals("ACA")) return 24;
+        if (tetraPart.equals("ACC")) return 25;
+        if (tetraPart.equals("ACG")) return 26;
+        if (tetraPart.equals("ACT")) return 27;
+        if (tetraPart.equals("AGA")) return 28;
+        if (tetraPart.equals("AGC")) return 29;
+        if (tetraPart.equals("AGG")) return 30;
+        if (tetraPart.equals("AGT")) return 31;
+        if (tetraPart.equals("ATA")) return 32;
+        if (tetraPart.equals("ATC")) return 33;
+        if (tetraPart.equals("ATG")) return 34;
+        if (tetraPart.equals("ATT")) return 35;
+        if (tetraPart.equals("CAA")) return 36;
+        if (tetraPart.equals("CAC")) return 37;
+        if (tetraPart.equals("CAG")) return 38;
+        if (tetraPart.equals("CAT")) return 39;
+        if (tetraPart.equals("CCA")) return 40;
+        if (tetraPart.equals("CCC")) return 41;
+        if (tetraPart.equals("CCG")) return 42;
+        if (tetraPart.equals("CCT")) return 43;
+        if (tetraPart.equals("CGA")) return 44;
+        if (tetraPart.equals("CGC")) return 45;
+        if (tetraPart.equals("CGG")) return 46;
+        if (tetraPart.equals("CGT")) return 47;
+        if (tetraPart.equals("CTA")) return 48;
+        if (tetraPart.equals("CTC")) return 49;
+        if (tetraPart.equals("CTG")) return 50;
+        if (tetraPart.equals("CTT")) return 51;
+        if (tetraPart.equals("GAA")) return 52;
+        if (tetraPart.equals("GAC")) return 53;
+        if (tetraPart.equals("GAG")) return 54;
+        if (tetraPart.equals("GAT")) return 55;
+        if (tetraPart.equals("GCA")) return 56;
+        if (tetraPart.equals("GCC")) return 57;
+        if (tetraPart.equals("GCG")) return 58;
+        if (tetraPart.equals("GCT")) return 59;
+        if (tetraPart.equals("GGA")) return 60;
+        if (tetraPart.equals("GGC")) return 61;
+        if (tetraPart.equals("GGG")) return 62;
+        if (tetraPart.equals("GGT")) return 63;
+        if (tetraPart.equals("GTA")) return 64;
+        if (tetraPart.equals("GTC")) return 65;
+        if (tetraPart.equals("GTG")) return 66;
+        if (tetraPart.equals("GTT")) return 67;
+        if (tetraPart.equals("TAA")) return 68;
+        if (tetraPart.equals("TAC")) return 69;
+        if (tetraPart.equals("TAG")) return 70;
+        if (tetraPart.equals("TAT")) return 71;
+        if (tetraPart.equals("TCA")) return 72;
+        if (tetraPart.equals("TCC")) return 73;
+        if (tetraPart.equals("TCG")) return 74;
+        if (tetraPart.equals("TCT")) return 75;
+        if (tetraPart.equals("TGA")) return 76;
+        if (tetraPart.equals("TGC")) return 77;
+        if (tetraPart.equals("TGG")) return 78;
+        if (tetraPart.equals("TGT")) return 79;
+        if (tetraPart.equals("TTA")) return 80;
+        if (tetraPart.equals("TTC")) return 81;
+        if (tetraPart.equals("TTG")) return 82;
+        if (tetraPart.equals("TTT")) return 83;
+        return -1;
     }
 }

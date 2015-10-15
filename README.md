@@ -14,7 +14,8 @@ Fonction de croissance des codes circulaires de tétranucléotides autocompléme
 
 - Utilisation de Disruptor (voir issues)
 - Multi-threading sur la génération de graphes (1/3 - 3/1 et 2/2)
-- Utilisation d'entiers / bytes pour les noeuds au lieu de chaînes
+- Les types primitifs sont plus performants, mais l'autoboxing a un impact sur les perfs.
+  Si on pouvait réimplémenter les graphes avec des int, on pourrait gagner en perfs (vrai pour tout le code en fait).
 - Multi-threading sur le producteur (plusieurs producteurs)
 - Compression des résultats (écriture de fichiers compressés)
 - Découpage de la HashMap en plusieurs HashMap (une par longueur de code) ?

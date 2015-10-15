@@ -93,6 +93,25 @@ public class Consumer implements Callable<Integer>
         }
     }
 
+//    public static void addTetraToGraph(Integer tetra, DirectedGraph g)
+//    {
+//        List<List<Integer>> split = CodeSet.Splits.get(tetra);
+//
+//        // FIXME: why not hardcode the tetrasplit array here as conditions? would it be faster?
+//        for (int i = 0; i < 3; i++)
+//        {
+//            List<Integer> elems = split.get(i);
+//
+//            Integer firstElement = elems.get(0);
+//            Integer secondElement = elems.get(1);
+//
+//            g.addVertex(firstElement);
+//            g.addVertex(secondElement);
+//
+//            g.addEdge(firstElement, secondElement);
+//        }
+//    }
+
     public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
     {
         DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
@@ -104,4 +123,16 @@ public class Consumer implements Callable<Integer>
 
         return cycleDetector.detectCycles();
     }
+
+//    public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
+//    {
+//        DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+//
+//        for (Integer tetra : tetraList)
+//            addTetraToGraph(tetra, g);
+//
+//        CycleDetector<Integer, DefaultEdge> cycleDetector = new CycleDetector<>(g);
+//
+//        return cycleDetector.detectCycles();
+//    }
 }
