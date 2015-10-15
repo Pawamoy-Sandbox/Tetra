@@ -12,7 +12,7 @@ public class Producer implements Callable<Integer>
     private final int codeLength;
     private List<BitSet> buffer;
     private int count = 0;
-    private int numberOfConsumers= 0;
+    private int numberOfConsumers = 0;
     private final int window = 10000;
 
     public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength)
@@ -66,7 +66,8 @@ public class Producer implements Callable<Integer>
         }
 
         // Last iteration
-        launchConsumer("Results/L" + codeLength + "/Thread"+(numberOfConsumers+1) + ".txt", buffer);
+        numberOfConsumers++;
+        launchConsumer(buffer);
         buffer = null;
 
         // Cumulative number of valid codes
@@ -75,7 +76,7 @@ public class Producer implements Callable<Integer>
 
         try
         {
-            for (int t = 0; t <= numberOfConsumers; t++)
+            for (int t = 0; t < numberOfConsumers; t++)
             {
                 // Get result as soon as it comes
                 res = completionService.take().get();
@@ -97,20 +98,10 @@ public class Producer implements Callable<Integer>
         return total;
     }
 
-    private void launchConsumer(String threadName, List<BitSet> list)
+    private void launchConsumer(List<BitSet> list)
     {
-        Callable<Integer> consumer = new Consumer(threadName, list);
-        boolean accepted = false;
-
-        while (! accepted)
-        {
-            try
-            {
-                completionService.submit(consumer);
-                accepted = true;
-            }
-            catch (RejectedExecutionException ignored) {}
-        }
+        Callable<Integer> consumer = new Consumer("Results/L" + codeLength + "/Thread"+ numberOfConsumers + ".txt", list);
+        completionService.submit(consumer);
     }
 
     private void addInBuffer(BitSet b, List<Integer> vector)
@@ -128,7 +119,7 @@ public class Producer implements Callable<Integer>
         {
             numberOfConsumers++;
             count = 0;
-            launchConsumer("Results/L" + codeLength + "/Thread" + numberOfConsumers + ".txt", buffer);
+            launchConsumer(buffer);
             buffer = new ArrayList<>();
         }
     }

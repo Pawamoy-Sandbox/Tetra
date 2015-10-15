@@ -45,9 +45,25 @@ public class Tetra
             // Queue size has to be related to window size of combinations splits:
             // we can have a 100-length queue of 1000-graph-sized threads,
             // or a 1000-length queue of 100-graph-sized threads...
-            ExecutorService consumer = new ThreadPoolExecutor(
+            ThreadPoolExecutor consumer = new ThreadPoolExecutor(
                     numThreads, numThreads, 0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>(queueSize));
+
+            // this will block if the queue is full as opposed to throwing exception
+            consumer.setRejectedExecutionHandler(new RejectedExecutionHandler()
+            {
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
+                {
+                    try
+                    {
+                        executor.getQueue().put(r);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             //No need to bound the queue for this executor.
             //Use utility method instead of the complicated Constructor.

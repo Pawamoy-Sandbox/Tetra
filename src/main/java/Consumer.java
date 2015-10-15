@@ -79,31 +79,12 @@ public class Consumer implements Callable<Integer>
         return validCodes;
     }
 
-    public static void addTetraToGraph(String tetra, DirectedGraph g)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            int firstElement = CodeSet.stringToTetraSubset(tetra, 0, i + 1);
-            int secondElement = CodeSet.stringToTetraSubset(tetra, i + 1, tetra.length());
-
-            g.addVertex(firstElement);
-            g.addVertex(secondElement);
-
-            g.addEdge(firstElement, secondElement);
-        }
-    }
-
-//    public static void addTetraToGraph(Integer tetra, DirectedGraph g)
+//    public static void addTetraToGraph(String tetra, DirectedGraph g)
 //    {
-//        List<List<Integer>> split = CodeSet.Splits.get(tetra);
-//
-//        // FIXME: why not hardcode the tetrasplit array here as conditions? would it be faster?
 //        for (int i = 0; i < 3; i++)
 //        {
-//            List<Integer> elems = split.get(i);
-//
-//            Integer firstElement = elems.get(0);
-//            Integer secondElement = elems.get(1);
+//            int firstElement = CodeSet.stringToTetraSubset(tetra, 0, i + 1);
+//            int secondElement = CodeSet.stringToTetraSubset(tetra, i + 1, tetra.length());
 //
 //            g.addVertex(firstElement);
 //            g.addVertex(secondElement);
@@ -112,16 +93,23 @@ public class Consumer implements Callable<Integer>
 //        }
 //    }
 
-    public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
+    public static void addTetraToGraph(Integer tetra, DirectedGraph g)
     {
-        DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+        List<List<Integer>> split = CodeSet.Splits.get(tetra);
 
-        for (Integer tetra : tetraList)
-            addTetraToGraph(CodeSet.byteToString(tetra), g);
+        // FIXME: why not hardcode the tetrasplit array here as conditions? would it be faster?
+        for (int i = 0; i < 3; i++)
+        {
+            List<Integer> elems = split.get(i);
 
-        CycleDetector<Integer, DefaultEdge> cycleDetector = new CycleDetector<>(g);
+            Integer firstElement = elems.get(0);
+            Integer secondElement = elems.get(1);
 
-        return cycleDetector.detectCycles();
+            g.addVertex(firstElement);
+            g.addVertex(secondElement);
+
+            g.addEdge(firstElement, secondElement);
+        }
     }
 
 //    public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
@@ -129,10 +117,22 @@ public class Consumer implements Callable<Integer>
 //        DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 //
 //        for (Integer tetra : tetraList)
-//            addTetraToGraph(tetra, g);
+//            addTetraToGraph(CodeSet.byteToString(tetra), g);
 //
 //        CycleDetector<Integer, DefaultEdge> cycleDetector = new CycleDetector<>(g);
 //
 //        return cycleDetector.detectCycles();
 //    }
+
+    public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
+    {
+        DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+        for (Integer tetra : tetraList)
+            addTetraToGraph(tetra, g);
+
+        CycleDetector<Integer, DefaultEdge> cycleDetector = new CycleDetector<>(g);
+
+        return cycleDetector.detectCycles();
+    }
 }
