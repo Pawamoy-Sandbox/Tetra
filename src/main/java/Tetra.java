@@ -50,20 +50,7 @@ public class Tetra
                     new LinkedBlockingQueue<Runnable>(queueSize));
 
             // this will block if the queue is full as opposed to throwing exception
-            consumer.setRejectedExecutionHandler(new RejectedExecutionHandler()
-            {
-                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)
-                {
-                    try
-                    {
-                        executor.getQueue().put(r);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            consumer.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
             //No need to bound the queue for this executor.
             //Use utility method instead of the complicated Constructor.

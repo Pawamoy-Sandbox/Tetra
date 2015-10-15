@@ -27,6 +27,7 @@ Fonction de croissance des codes circulaires de tétranucléotides autocompléme
 - Construction des chaînes de caractères (éviter les recopies via +)
 - Une HashMap globale en lecture seule, une HashMap par consommateur en écriture,
   fusion des HashMap partielle dans la globale à la fin des threads (plus sécurisé/rapide?)
+- Utiliser l'executor de Guava (voir le 2ème post de [cette page](https://stackoverflow.com/questions/2247734/executorservice-standard-way-to-avoid-to-task-queue-getting-too-full))
 
 ## Questions
 
