@@ -295,7 +295,6 @@ public class CodeSet {
         }
         */
 
-
         // FIXME: maybe write our own generator that works with BitSet
         Integer[] int_set = new Integer[bitset.cardinality()];
 
@@ -334,6 +333,20 @@ public class CodeSet {
         return false;
     }
 
+//    public static boolean containsSubset(BitSet bitset, ConcurrentHashMap<BitSet, Boolean> bitsetMap)
+//    {
+//        for (BitSet key : bitsetMap.keySet())
+//        {
+//            BitSet copy = (BitSet) bitset.clone();
+//
+//            copy.and(key);
+//            if (copy == key)
+//                return true;
+//        }
+//
+//        return false;
+//    }
+
     public static boolean isValidCode(BitSet bitset)
     {
         return ! containsSubset(bitset, BSWrong);
@@ -359,7 +372,6 @@ public class CodeSet {
 
         return b;
     }
-
 
     public static int aminoAcidValue(char c) {
         if (c == 'A') {
@@ -415,6 +427,7 @@ public class CodeSet {
             System.out.println();
         }
     }
+
     public static int toInt(String tetraPart)
     {
         if (tetraPart.equals("A")) return 0;
