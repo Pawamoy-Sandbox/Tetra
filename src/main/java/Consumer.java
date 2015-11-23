@@ -43,8 +43,13 @@ public class Consumer implements Callable<Integer>
             {
                 List<Integer> tetraList = new ArrayList<>();
 
-                if (! CodeSet.isValidCode(bitset))
-                    continue;
+
+                // This test is expensive. Maybe optimizing
+                // the way bitsets are splitted in subset would
+                // do the trick (icombinatorics subset is bad...)
+                // See CodeSet.containsSubset
+//                if (! CodeSet.isValidCode(bitset))
+//                    continue;
 
                 for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
                     tetraList.add(b);
