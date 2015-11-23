@@ -64,10 +64,10 @@ public class Consumer implements Callable<Integer>
                         bw.write("\n");
                     }
                 }
-                else
-                {
-                    CodeSet.addWrongCode(bitset);
-                }
+//                else
+//                {
+//                    CodeSet.addWrongCode(bitset);
+//                }
             }
 
             if (writeResults)
