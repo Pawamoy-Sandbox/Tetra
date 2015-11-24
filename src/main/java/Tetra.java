@@ -32,6 +32,8 @@ public class Tetra
         int numThreads = 8;
         int queueSize = 12;
 
+        long startTime = System.currentTimeMillis();
+
         for (int l = start; l < end; l++)
         {
             File LDir = new File("Results/L" + l);
@@ -54,7 +56,6 @@ public class Tetra
             ExecutorService producerExecutor = Executors.newSingleThreadExecutor();
             Callable<Integer> producer = new Producer(completionService, consumer, l);
 
-            long startTime = System.currentTimeMillis();
             Future<Integer> future = producerExecutor.submit(producer);
 
             Integer numberOfValidCodes = 0;

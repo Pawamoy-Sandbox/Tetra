@@ -26,14 +26,15 @@ public class Consumer implements Callable<Integer>
     public Integer call() throws Exception
     {
         int validCodes = 0;
-        BufferedWriter bw = null;
+        BufferedWriter bw;
 
         try
         {
             if (writeResults)
             {
                 bw = new BufferedWriter(new FileWriter(this.threadName));
-                if (bw == null) {
+                if (bw == null)
+                {
                     System.out.println(this.threadName + ": problem while opening FileWriter; Stopping thread.");
                     return 0;
                 }
@@ -42,14 +43,6 @@ public class Consumer implements Callable<Integer>
             for (BitSet bitset : this.bitsetList)
             {
                 List<Integer> tetraList = new ArrayList<>();
-
-
-                // This test is expensive. Maybe optimizing
-                // the way bitsets are splitted in subset would
-                // do the trick (icombinatorics subset is bad...)
-                // See CodeSet.containsSubset
-//                if (! CodeSet.isValidCode(bitset))
-//                    continue;
 
                 for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
                     tetraList.add(b);
@@ -64,10 +57,6 @@ public class Consumer implements Callable<Integer>
                         bw.write("\n");
                     }
                 }
-//                else
-//                {
-//                    CodeSet.addWrongCode(bitset);
-//                }
             }
 
             if (writeResults)
