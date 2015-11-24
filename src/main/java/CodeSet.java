@@ -3,6 +3,7 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -54,7 +55,7 @@ public class CodeSet {
         readByteCompl();
         readValidS12();
         readSplits();
-//        readValidS114();
+        readValidS114();
 
         S12.removeAll(S16);
         BS12.andNot(BS16);
@@ -163,16 +164,20 @@ public class CodeSet {
         {
             ArrayList<BitSet> validCodes = new ArrayList<>();
 
-            try (BufferedReader br = new BufferedReader(new FileReader("data/L" + i + "ValidS12.txt"))) {
+            try (BufferedReader br = new BufferedReader(new FileReader("data/L" + i + "ValidS12.txt")))
+            {
                 String line;
 
-                while ((line = br.readLine()) != null) {
+                while ((line = br.readLine()) != null)
+                {
                     if (line.isEmpty())
                         continue;
 
                     validCodes.add(readLine(line, i));
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
 
@@ -184,22 +189,37 @@ public class CodeSet {
     {
         for (int i = 2; i <= max_bs114; i+=2)
         {
+            File resultDir = new File("Results/L" + i);
+
+            if (! resultDir.isDirectory())
+                continue;
+
             ArrayList<BitSet> validCodes = new ArrayList<>();
 
-            try (BufferedReader br = new BufferedReader(new FileReader("data/L" + i + "ValidS12.txt"))) {
-                String line;
+            for (File file : resultDir.listFiles())
+            {
+                if (file.getName().startsWith("WithoutS12"))
+                {
+                    try (BufferedReader br = new BufferedReader(new FileReader(file)))
+                    {
+                        String line;
 
-                while ((line = br.readLine()) != null) {
-                    if (line.isEmpty())
-                        continue;
+                        while ((line = br.readLine()) != null)
+                        {
+                            if (line.isEmpty())
+                                continue;
 
-                    validCodes.add(readLine(line, i));
+                            validCodes.add(readLine(line, i));
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
 
-            ValidBS12.add(validCodes);
+            ValidBS114.add(validCodes);
         }
     }
 
