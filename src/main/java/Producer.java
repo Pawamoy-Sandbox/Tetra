@@ -14,6 +14,7 @@ public class Producer implements Callable<Integer>
     private int count = 0;
     private int numberOfConsumers = 0;
     private final int window = 10000;
+    private String withoutS12 = "";
 
     public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength)
     {
@@ -25,8 +26,6 @@ public class Producer implements Callable<Integer>
     @Override
     public Integer call() throws InterruptedException
     {
-        // NOTE: we can use apache combinatorics utils: binomialCoefficient
-//        long totalCombinations = CombinatoricsUtils.binomialCoefficient(codeLength, S.cardinality());
         int BS12_choices;
         boolean even = (codeLength % 2 == 0);
 
@@ -55,9 +54,16 @@ public class Producer implements Callable<Integer>
             }
         }
 
+        // Last "With S12" iteration
+        numberOfConsumers++;
+        count = 0;
+        launchConsumer(buffer);
+        buffer = new ArrayList<>();
+
         // Without tetras from S12 (only when codeLength is even)
         if (even)
         {
+            withoutS12 = "WithoutS12-";
             for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, codeLength / 2))
             {
                 BitSet b = new BitSet();
@@ -65,7 +71,8 @@ public class Producer implements Callable<Integer>
             }
         }
 
-        // Last iteration
+
+        // Last "Without S12" iteration
         numberOfConsumers++;
         launchConsumer(buffer);
         buffer = null;
@@ -100,7 +107,7 @@ public class Producer implements Callable<Integer>
 
     private void launchConsumer(List<BitSet> list)
     {
-        Callable<Integer> consumer = new Consumer("Results/L" + codeLength + "/Thread"+ numberOfConsumers + ".txt", list);
+        Callable<Integer> consumer = new Consumer("Results/L" + codeLength + "/" + withoutS12 + "Thread"+ numberOfConsumers + ".txt", list);
         completionService.submit(consumer);
     }
 
