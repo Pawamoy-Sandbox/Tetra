@@ -29,7 +29,7 @@ public class CodeSet {
     public static List<Integer> SByteCompl = new ArrayList<>();
     public static List<List<List<Integer>>> Splits = new ArrayList<>();
 
-    public static final int max_bs114 = 8;
+    public static final int max_bs114 = 1;
 
     // Singleton Stuff
     private static class SingletonHolder

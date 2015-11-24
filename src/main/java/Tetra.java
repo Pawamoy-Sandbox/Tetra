@@ -1,4 +1,9 @@
+import org.apache.commons.math3.util.CombinatoricsUtils;
+
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
@@ -75,9 +80,36 @@ public class Tetra
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
 
+            BigDecimal total = totalCombinations(l);
+            float percent = BigDecimal.valueOf(numberOfValidCodes).divide(total, 2, RoundingMode.UP).floatValue() * 100;
+
             System.out.print(String.format("%1$18s", l + " | "));
-            System.out.print(String.format("%1$18s", numberOfValidCodes + " | "));
+            System.out.print(String.format("%1$18s", numberOfValidCodes + " (" + (int)percent + "%)" + " | "));
             System.out.println(String.format("%1$18s", new SimpleDateFormat("HH:mm:ss:SSS").format(new Date(elapsedTime-1000*3600)) + " |"));
         }
+    }
+
+    private static BigDecimal totalCombinations(int l)
+    {
+        int BS12_choices;
+        boolean even = (l % 2 == 0);
+
+        if (l <= 6)
+            BS12_choices = l;
+        else if (even)
+            BS12_choices = 6;
+        else
+            BS12_choices = 5;
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (int i = BS12_choices; i > 0; i -= 2)
+        {
+            total = total.add(BigDecimal.valueOf(CombinatoricsUtils.binomialCoefficient(114, (l-i)/2) * CombinatoricsUtils.binomialCoefficient(12, i)));
+        }
+
+        if (even)
+            total = total.add(BigDecimal.valueOf(CombinatoricsUtils.binomialCoefficient(114, l/2)));
+
+        return total;
     }
 }
