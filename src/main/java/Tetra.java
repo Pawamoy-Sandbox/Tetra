@@ -10,7 +10,8 @@ import java.util.concurrent.*;
 
 public class Tetra
 {
-    public static void main (String[] args) {
+    public static void main (String[] args)
+    {
         CodeSet.initialize();
 
         System.out.print(String.format("%1$18s", "Code length | "));

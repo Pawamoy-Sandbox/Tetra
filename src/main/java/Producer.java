@@ -3,6 +3,7 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.*;
@@ -81,7 +82,10 @@ public class Producer implements Callable<Integer>
             {
                 File resultDir = new File("Results/L" + (codeLength - i));
 
-                for (File file : resultDir.listFiles(filter))
+                File[] list = resultDir.listFiles(filter);
+                Arrays.sort(list);
+
+                for (File file : list)
                 {
                     try (BufferedReader br = new BufferedReader(new FileReader(file)))
                     {
@@ -92,7 +96,7 @@ public class Producer implements Callable<Integer>
                             if (line.isEmpty())
                                 continue;
 
-                            BitSet rb = CodeSet.lineToBitSet(line, i);
+                            BitSet rb = CodeSet.lineToBitSet(line, (codeLength - i));
 
                             for (BitSet bs12 : validS12)
                             {
@@ -137,7 +141,10 @@ public class Producer implements Callable<Integer>
             {
                 File resultDir = new File("Results/L" + (codeLength - 2));
 
-                for (File file : resultDir.listFiles(filter))
+                File[] list = resultDir.listFiles(filter);
+                Arrays.sort(list);
+
+                for (File file : list)
                 {
                     try (BufferedReader br = new BufferedReader(new FileReader(file)))
                     {
@@ -150,9 +157,12 @@ public class Producer implements Callable<Integer>
 
                             BitSet rb = CodeSet.lineToBitSet(line, codeLength - 2);
                             BitSet choices = new BitSet();
+                            BitSet rbNoCompl = new BitSet();
 
+                            rbNoCompl.or(rb);
+                            rbNoCompl.andNot(CodeSet.BSC114);
                             choices.or(CodeSet.BS114);
-                            choices.andNot(rb);
+                            choices.clear(0, rbNoCompl.length());
 
                             for (int bit = -1; (bit = choices.nextSetBit(bit + 1)) != -1; )
                             {
