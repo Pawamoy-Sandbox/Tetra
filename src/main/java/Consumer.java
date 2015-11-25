@@ -14,7 +14,7 @@ public class Consumer implements Callable<Integer>
     private final List<BitSet> bitsetList;
     private final String threadName;
     // Using a final tells the Java Compiler to use only one condition-branch (-> faster execution)
-    private static final boolean writeResults = false;
+    private static final boolean writeResults = true;
 
     public Consumer(String threadName, List<BitSet> bitsetList)
     {

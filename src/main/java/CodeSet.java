@@ -25,7 +25,7 @@ public class CodeSet {
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<List<BitSet>> ValidBS12 = new ArrayList<>();
-    public static List<List<BitSet>> ValidBS114 = new ArrayList<>();
+    public static List<BitSet> ValidL2BS114 = new ArrayList<>();
     public static List<Integer> SByteCompl = new ArrayList<>();
     public static List<List<List<Integer>>> Splits = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class CodeSet {
         readByteCompl();
         readValidS12();
         readSplits();
-        readValidS114();
+        readValidL2S114();
 
         S12.removeAll(S16);
         BS12.andNot(BS16);
@@ -141,7 +141,7 @@ public class CodeSet {
         }
     }
 
-    public static BitSet readLine(String line, int l)
+    public static BitSet lineToBitSet(String line, int l)
     {
         String[] tetras = line.split("\t");
 
@@ -168,7 +168,7 @@ public class CodeSet {
                     if (line.isEmpty())
                         continue;
 
-                    validCodes.add(readLine(line, i));
+                    validCodes.add(lineToBitSet(line, i));
                 }
             }
             catch (IOException e)
@@ -180,57 +180,23 @@ public class CodeSet {
         }
     }
 
-    private static void readValidS114()
+    private static void readValidL2S114()
     {
-        final Pattern p = Pattern.compile("^W.*");
-        final FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return p.matcher(file.getName()).matches();
-            }
-        };
-
-        for (int i = 2; i <= max_bs114; i+=2)
+        try (BufferedReader br = new BufferedReader(new FileReader("data/L2ValidS114.txt")))
         {
-            File resultDir = new File("Results/L" + i);
+            String line;
 
-            if (! resultDir.isDirectory())
+            while ((line = br.readLine()) != null)
             {
-                ValidBS114.add(new ArrayList<BitSet>());
-                continue;
+                if (line.isEmpty())
+                    continue;
+
+                ValidL2BS114.add(lineToBitSet(line, 2));
             }
-
-            System.out.println("Reading L" + i);
-            ArrayList<BitSet> validCodes = new ArrayList<>();
-            File[] fileList = resultDir.listFiles(filter);
-            int numberOfFiles = fileList.length;
-
-            for (int j = 0; j < numberOfFiles; j++)
-            {
-                File file = fileList[j];
-                System.out.print("\r\t" + ((float)j/(float)numberOfFiles*100) + "%");
-
-                try (BufferedReader br = new BufferedReader(new FileReader(file)))
-                {
-                    String line;
-
-                    while ((line = br.readLine()) != null)
-                    {
-                        if (line.isEmpty())
-                            continue;
-
-                        validCodes.add(readLine(line, i));
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-            System.out.println("\r\t100%");
-
-            ValidBS114.add(validCodes);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -348,27 +314,5 @@ public class CodeSet {
             result += byteToString(i) + "\t";
 
         return result;
-    }
-
-    public static boolean loaded(int l)
-    {
-        return l <= max_bs114 && l % 2 == 0 && !ValidBS114.get((l / 2) - 1).isEmpty();
-    }
-
-    public static int maxLoaded()
-    {
-        for (int i = max_bs114; i >= 2; i-=2)
-            if (loaded(i))
-                return i;
-
-        return 1;
-    }
-
-    public static List<BitSet> getValidS114(int l)
-    {
-        if (loaded(l))
-            return ValidBS114.get((l/2)-1);
-        else
-            return null;
     }
 }

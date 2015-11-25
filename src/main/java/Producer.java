@@ -1,9 +1,12 @@
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.regex.Pattern;
 
 public class Producer implements Callable<Integer>
 {
@@ -38,18 +41,73 @@ public class Producer implements Callable<Integer>
 
         buffer = new ArrayList<>();
 
+        final Pattern p = Pattern.compile("^W.*");
+        final FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return p.matcher(file.getName()).matches();
+            }
+        };
+
         // With tetras from S12
         for (int i = BS12_choices; i > 0; i -= 2)
         {
             List<BitSet> validS12 = CodeSet.ValidBS12.get(i-1);
 
-            for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, (codeLength - i) / 2))
+            if (codeLength - i == 2)
+            {
+                for (int bs114 = -1; (bs114 = CodeSet.BS114.nextSetBit(bs114 + 1)) != -1; )
+                {
+                    for (BitSet bs12 : validS12)
+                    {
+                        BitSet code = new BitSet();
+                        code.or(bs12);
+                        code.set(bs114);
+                        code.set(CodeSet.compl(bs114));
+                        addInBuffer(code);
+                    }
+                }
+            }
+            else if (codeLength == i)
             {
                 for (BitSet bs12 : validS12)
                 {
-                    BitSet b = new BitSet();
-                    b.or(bs12);
-                    addInBuffer(b, v.getVector());
+                    BitSet code = new BitSet();
+                    code.or(bs12);
+                    addInBuffer(code);
+                }
+            }
+            else
+            {
+                File resultDir = new File("Results/L" + (codeLength - i));
+
+                for (File file : resultDir.listFiles(filter))
+                {
+                    try (BufferedReader br = new BufferedReader(new FileReader(file)))
+                    {
+                        String line;
+
+                        while ((line = br.readLine()) != null)
+                        {
+                            if (line.isEmpty())
+                                continue;
+
+                            BitSet rb = CodeSet.lineToBitSet(line, i);
+
+                            for (BitSet bs12 : validS12)
+                            {
+                                BitSet b = new BitSet();
+                                b.or(bs12);
+                                b.or(rb);
+
+                                addInBuffer(b);
+                            }
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -64,18 +122,61 @@ public class Producer implements Callable<Integer>
         if (even)
         {
             withoutS12 = "WithoutS12-";
-            for (ICombinatoricsVector<Integer> v : CodeSet.combine(CodeSet.BS114, codeLength / 2))
+
+            if (codeLength == 2)
             {
-                BitSet b = new BitSet();
-                addInBuffer(b, v.getVector());
+                for (int bit = -1; (bit = CodeSet.BS114.nextSetBit(bit + 1)) != -1; )
+                {
+                    BitSet b = new BitSet();
+                    b.set(bit);
+                    b.set(CodeSet.compl(bit));
+                    addInBuffer(b);
+                }
             }
+            else
+            {
+                File resultDir = new File("Results/L" + (codeLength - 2));
+
+                for (File file : resultDir.listFiles(filter))
+                {
+                    try (BufferedReader br = new BufferedReader(new FileReader(file)))
+                    {
+                        String line;
+
+                        while ((line = br.readLine()) != null)
+                        {
+                            if (line.isEmpty())
+                                continue;
+
+                            BitSet rb = CodeSet.lineToBitSet(line, codeLength - 2);
+                            BitSet choices = new BitSet();
+
+                            choices.or(CodeSet.BS114);
+                            choices.andNot(rb);
+
+                            for (int bit = -1; (bit = choices.nextSetBit(bit + 1)) != -1; )
+                            {
+                                BitSet bitset = new BitSet();
+                                bitset.or(rb);
+                                bitset.set(bit);
+                                bitset.set(CodeSet.compl(bit));
+                                addInBuffer(bitset);
+                            }
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+            // Last "Without S12" iteration
+            numberOfConsumers++;
+            launchConsumer(buffer);
+            buffer = null;
         }
-
-
-        // Last "Without S12" iteration
-        numberOfConsumers++;
-        launchConsumer(buffer);
-        buffer = null;
 
         // Cumulative number of valid codes
         Integer total = 0;
@@ -111,14 +212,8 @@ public class Producer implements Callable<Integer>
         completionService.submit(consumer);
     }
 
-    private void addInBuffer(BitSet b, List<Integer> vector)
+    private void addInBuffer(BitSet b)
     {
-        for (Integer bit : vector)
-        {
-            b.set(bit);
-            b.set(CodeSet.compl(bit));
-        }
-
         buffer.add(b);
         count++;
 
