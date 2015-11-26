@@ -57,14 +57,14 @@ public class Producer implements Callable<Integer>
 
             if (codeLength - i == 2)
             {
-                for (int bs114 = -1; (bs114 = CodeSet.BS114.nextSetBit(bs114 + 1)) != -1; )
+                for (int bs108 = -1; (bs108 = CodeSet.BS108.nextSetBit(bs108 + 1)) != -1; )
                 {
                     for (BitSet bs12 : validS12)
                     {
                         BitSet code = new BitSet();
                         code.or(bs12);
-                        code.set(bs114);
-                        code.set(CodeSet.compl(bs114));
+                        code.set(bs108);
+                        code.set(CodeSet.compl(bs108));
                         addInBuffer(code);
                     }
                 }
@@ -129,7 +129,7 @@ public class Producer implements Callable<Integer>
 
             if (codeLength == 2)
             {
-                for (int bit = -1; (bit = CodeSet.BS114.nextSetBit(bit + 1)) != -1; )
+                for (int bit = -1; (bit = CodeSet.BS108.nextSetBit(bit + 1)) != -1; )
                 {
                     BitSet b = new BitSet();
                     b.set(bit);
@@ -160,8 +160,8 @@ public class Producer implements Callable<Integer>
                             BitSet rbNoCompl = new BitSet();
 
                             rbNoCompl.or(rb);
-                            rbNoCompl.andNot(CodeSet.BSC114);
-                            choices.or(CodeSet.BS114);
+                            rbNoCompl.andNot(CodeSet.BSC108);
+                            choices.or(CodeSet.BS108);
                             choices.clear(0, rbNoCompl.length());
 
                             for (int bit = -1; (bit = choices.nextSetBit(bit + 1)) != -1; )

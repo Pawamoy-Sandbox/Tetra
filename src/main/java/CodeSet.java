@@ -14,6 +14,8 @@ public class CodeSet {
     public static List<String> S126 = new ArrayList<>();
     public static List<String> S114 = new ArrayList<>();
     public static List<String> SC114 = new ArrayList<>();
+    public static List<String> S108 = new ArrayList<>();
+    public static List<String> SC108 = new ArrayList<>();
     public static List<String> S16 = new ArrayList<>();
     public static List<String> S12 = new ArrayList<>();
     public static BitSet BS256 = new BitSet();
@@ -22,6 +24,8 @@ public class CodeSet {
     public static BitSet BS126 = new BitSet();
     public static BitSet BS114 = new BitSet();
     public static BitSet BSC114 = new BitSet();
+    public static BitSet BS108 = new BitSet();
+    public static BitSet BSC108 = new BitSet();
     public static BitSet BS16 = new BitSet();
     public static BitSet BS12 = new BitSet();
     public static List<List<BitSet>> ValidBS12 = new ArrayList<>();
@@ -75,6 +79,22 @@ public class CodeSet {
         S126.addAll(S12);
         Collections.sort(S126);
 
+        S108 = new ArrayList<>(S114);
+        S108.remove("ATCG");
+        S108.remove("ATGC");
+        S108.remove("ATTA");
+        S108.remove("CGGC");
+        S108.remove("CGTA");
+        S108.remove("GCTA");
+
+        SC108 = new ArrayList<>(SC114);
+        SC108.remove(compl("ATCG"));
+        SC108.remove(compl("ATGC"));
+        SC108.remove(compl("ATTA"));
+        SC108.remove(compl("CGGC"));
+        SC108.remove(compl("CGTA"));
+        SC108.remove(compl("GCTA"));
+
         // Bit sets
         BS240.or(BS256);
         BS240.andNot(BS16);
@@ -89,6 +109,22 @@ public class CodeSet {
 
         BS126.or(BS114);
         BS126.or(BS12);
+
+        BS108.or(BS114);
+        BS108.clear(stringToByte("ATCG"));
+        BS108.clear(stringToByte("ATGC"));
+        BS108.clear(stringToByte("ATTA"));
+        BS108.clear(stringToByte("CGGC"));
+        BS108.clear(stringToByte("CGTA"));
+        BS108.clear(stringToByte("GCTA"));
+
+        BSC108.or(BSC114);
+        BSC108.clear(compl(stringToByte("ATCG")));
+        BSC108.clear(compl(stringToByte("ATGC")));
+        BSC108.clear(compl(stringToByte("ATTA")));
+        BSC108.clear(compl(stringToByte("CGGC")));
+        BSC108.clear(compl(stringToByte("CGTA")));
+        BSC108.clear(compl(stringToByte("GCTA")));
     }
 
     private static void readTetra256()
