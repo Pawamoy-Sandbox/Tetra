@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for t in 2 3 4 5 6 7 8; do
+    sum=0
+    grep "$t threads" PerfTests.txt | grep -o '..:[0-9][0-9][0-9]' | tr ':' '.' | while read time; do
+        sum=$(echo "$sum + $time" | bc)
+        echo -en "\r$t threads: ${sum}s"
+    done
+    echo
+done

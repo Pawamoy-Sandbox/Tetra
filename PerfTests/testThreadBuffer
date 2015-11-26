@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for thread in 2 3 4 5 6 7 8; do
+    for buffer in 256 512 1024 2048 4096 8192 16384 32768 65536 131072; do
+        queue=$((2*thread))
+        echo -n "$thread threads, buffer=$buffer: "
+        java -jar tetra-string.jar -s 7 -e 7 -t $thread -q $queue -b $buffer | grep -o '..:..:..:...'
+        /bin/rm -rf Results/L7
+    done
+done
