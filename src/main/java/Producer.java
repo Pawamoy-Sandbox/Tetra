@@ -14,7 +14,7 @@ public class Producer implements Callable<Integer>
     private List<BitSet> buffer;
     private int count = 0;
     private int numberOfConsumers = 0;
-    private final int window = 10000;
+    private int bufferSize;
     private String withoutS12 = "";
 
     public Producer(CompletionService<Integer> completionService, ExecutorService consumerExecutor, int codeLength)
@@ -22,6 +22,7 @@ public class Producer implements Callable<Integer>
         this.completionService = completionService;
         this.consumerExecutor = consumerExecutor;
         this.codeLength = codeLength;
+        this.bufferSize = CodeSet.threadBuffer;
     }
 
     @Override
@@ -224,7 +225,7 @@ public class Producer implements Callable<Integer>
         buffer.add(b);
         count++;
 
-        if (count == window)
+        if (count == bufferSize)
         {
             numberOfConsumers++;
             count = 0;

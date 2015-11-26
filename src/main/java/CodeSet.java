@@ -27,6 +27,13 @@ public class CodeSet {
     public static List<Integer> SByteCompl = new ArrayList<>();
     public static List<List<List<Integer>>> Splits = new ArrayList<>();
 
+    public static int threadBuffer = 10000;
+    public static int thread = 8;
+    public static int threadQueue = 12;
+    public static int startL = 2;
+    public static int endL = 60;
+    public static final boolean writeBytesNoTetra = true;
+
     // Singleton Stuff
     private static class SingletonHolder
     {
@@ -62,7 +69,7 @@ public class CodeSet {
 
         for (String s : S228){
             if (!SC114.contains(s)){
-                SC114.add(CodeSet.compl(s));
+                SC114.add(compl(s));
                 S114.add(s);
             }
         }
@@ -167,6 +174,22 @@ public class CodeSet {
 
         BitSet code = new BitSet();
 
+        if (writeBytesNoTetra)
+            for (int i = 0; i < l; i++)
+                code.set(Integer.parseInt(tetras[i]));
+        else
+            for (int i = 0; i < l; i++)
+                code.set(stringToByte(tetras[i]));
+
+        return code;
+    }
+
+    public static BitSet readTetraLine(String line, int l)
+    {
+        String[] tetras = line.split("\t");
+
+        BitSet code = new BitSet();
+
         for (int i = 0; i < l; i++)
             code.set(stringToByte(tetras[i]));
 
@@ -188,7 +211,7 @@ public class CodeSet {
                     if (line.isEmpty())
                         continue;
 
-                    validCodes.add(lineToBitSet(line, i));
+                    validCodes.add(readTetraLine(line, i));
                 }
             }
             catch (IOException e)
@@ -289,14 +312,27 @@ public class CodeSet {
         return S256.indexOf(t);
     }
 
-    public static String byteListToString(List<Integer> list)
+    public static String bitsetToString(BitSet bitset)
     {
-        // FIXME: great loss of performance here, use StringBuilder or something
-        String result = "";
+        if (writeBytesNoTetra)
+        {
+            // FIXME: great loss of performance here, use StringBuilder or something
+            String result = "";
 
-        for (Integer i : list)
-            result += byteToString(i) + "\t";
+            for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
+                result += b + "\t";
 
-        return result;
+            return result;
+        }
+        else
+        {
+            // FIXME: great loss of performance here, use StringBuilder or something
+            String result = "";
+
+            for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
+                result += byteToString(b) + "\t";
+
+            return result;
+        }
     }
 }

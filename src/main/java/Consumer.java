@@ -33,27 +33,22 @@ public class Consumer implements Callable<Integer>
             if (writeResults)
             {
                 bw = new BufferedWriter(new FileWriter(this.threadName));
-                if (bw == null)
-                {
-                    System.out.println(this.threadName + ": problem while opening FileWriter; Stopping thread.");
-                    return 0;
-                }
+//                if (bw == null)
+//                {
+//                    System.out.println(this.threadName + ": problem while opening FileWriter; Stopping thread.");
+//                    return 0;
+//                }
             }
 
             for (BitSet bitset : this.bitsetList)
             {
-                List<Integer> tetraList = new ArrayList<>();
-
-                for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
-                    tetraList.add(b);
-
-                if (!checkLoopsInTetraGraph(tetraList))
+                if (!checkLoopsInTetraGraph(bitset))
                 {
                     validCodes++;
 
                     if (writeResults)
                     {
-                        bw.write(CodeSet.byteListToString(tetraList));
+                        bw.write(CodeSet.bitsetToString(bitset));
                         bw.write("\n");
                     }
                 }
@@ -92,12 +87,12 @@ public class Consumer implements Callable<Integer>
         }
     }
 
-    public static boolean checkLoopsInTetraGraph(List<Integer> tetraList)
+    public static boolean checkLoopsInTetraGraph(BitSet bitset)
     {
         DirectedGraph<Integer, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        for (Integer tetra : tetraList)
-            addTetraToGraph(tetra, g);
+        for (int b = -1; (b = bitset.nextSetBit(b + 1)) != -1; )
+            addTetraToGraph(b, g);
 
         CycleDetector<Integer, DefaultEdge> cycleDetector = new CycleDetector<>(g);
 
