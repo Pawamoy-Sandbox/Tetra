@@ -27,12 +27,12 @@ public class CodeSet {
     public static List<Integer> SByteCompl = new ArrayList<>();
     public static List<List<List<Integer>>> Splits = new ArrayList<>();
 
-    public static int threadBuffer = 10000;
-    public static int thread = 8;
-    public static int threadQueue = 12;
+    public static int threadBuffer = 8192;
+    public static int thread = 4;
+    public static int threadQueue = 8;
     public static int startL = 2;
     public static int endL = 60;
-    public static final boolean writeBytesNoTetra = true;
+    public static final boolean writeBytesNoTetra = false;
 
     // Singleton Stuff
     private static class SingletonHolder
