@@ -1,10 +1,4 @@
-import com.sun.org.apache.bcel.internal.classfile.Code;
-import org.apache.commons.math3.util.CombinatoricsUtils;
-
 import java.io.File;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
@@ -38,6 +32,18 @@ public class Tetra
                 case "--end":
                     CodeSet.endL = Integer.parseInt(args[++i]);
                     break;
+                case "-m":
+                case "--master":
+                    CodeSet.master = true; // Default behavior
+                    break;
+                case "-w":
+                case "--worker":
+                    CodeSet.master = false;
+                    break;
+                case "-v":
+                case "--even":
+                    CodeSet.evenOnly = true;
+                    break;
                 case "-h":
                 case "--help":
                     printHelp();
@@ -49,12 +55,21 @@ public class Tetra
             }
         }
 
-        System.out.println("Number of active threads:         " + CodeSet.thread);
-        System.out.println("Size of thread queue:             " + CodeSet.threadQueue);
-        System.out.println("Size of threads buffer:           " + CodeSet.threadBuffer);
-        System.out.println("Starting length:                  " + CodeSet.startL);
-        System.out.println("Ending length:                    " + CodeSet.endL);
-        System.out.println("Writing bytes instead of strings: " + CodeSet.writeBytesNoTetra);
+        System.out.println("Threads:          " + CodeSet.thread + " active / " + CodeSet.threadQueue + " queued");
+        System.out.println("Threads buffer:   " + CodeSet.threadBuffer);
+        if (CodeSet.startL == CodeSet.endL)
+            System.out.println("Computed length:  " + CodeSet.startL);
+        else
+            System.out.println("Computed length:  " + CodeSet.startL + " to " + CodeSet.endL);
+        if (CodeSet.writeBytesNoTetra)
+            System.out.println("Output format:    tetra indexes");
+        else
+            System.out.println("Output format:    tetra strings");
+        System.out.println("Even length only: " + CodeSet.evenOnly);
+        if (CodeSet.master)
+            System.out.println("Process status:   master");
+        else
+            System.out.println("Process status:   worker");
         System.out.println();
 
         try
@@ -80,8 +95,24 @@ public class Tetra
 
         long startTime = System.currentTimeMillis();
 
-        for (int l = start; l <= end; l++)
+        int increment = 1;
+
+        if (CodeSet.evenOnly)
         {
+            if (start % 2 != 0)
+            {
+                System.err.println("Starting length is not even");
+                System.exit(1);
+            }
+
+            increment = 2;
+        }
+
+        for (int l = start; l <= end; l+=increment)
+        {
+            System.out.print(String.format("%1$18s", l + " | "));
+            System.out.flush();
+
             File LDir = new File("Results/L" + l);
             LDir.mkdirs();
 
@@ -121,37 +152,14 @@ public class Tetra
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
 
-            BigDecimal total = totalCombinations(l);
-            float percent = BigDecimal.valueOf(numberOfValidCodes).divide(total, 2, RoundingMode.UP).floatValue() * 100;
+            // TODO: why bother computing that each time when we can hardcode it once and for all
+//            BigDecimal total = totalCombinations(l);
+//            float percent = BigDecimal.valueOf(numberOfValidCodes).divide(total, 2, RoundingMode.UP).floatValue() * 100;
 
-            System.out.print(String.format("%1$18s", l + " | "));
-            System.out.print(String.format("%1$18s", numberOfValidCodes + " (" + (int)percent + "%)" + " | "));
+            System.out.print(String.format("%1$18s", numberOfValidCodes + " | "));
+//            System.out.print(String.format("%1$18s", numberOfValidCodes + " (" + (int)percent + "%)" + " | "));
             System.out.println(String.format("%1$18s", new SimpleDateFormat("HH:mm:ss:SSS").format(new Date(elapsedTime-1000*3600)) + " |"));
         }
-    }
-
-    private static BigDecimal totalCombinations(int l)
-    {
-        int BS12_choices;
-        boolean even = (l % 2 == 0);
-
-        if (l <= 6)
-            BS12_choices = l;
-        else if (even)
-            BS12_choices = 6;
-        else
-            BS12_choices = 5;
-
-        BigDecimal total = BigDecimal.ZERO;
-        for (int i = BS12_choices; i > 0; i -= 2)
-        {
-            total = total.add(BigDecimal.valueOf(CombinatoricsUtils.binomialCoefficient(114, (l-i)/2) * CombinatoricsUtils.binomialCoefficient(12, i)));
-        }
-
-        if (even)
-            total = total.add(BigDecimal.valueOf(CombinatoricsUtils.binomialCoefficient(114, l/2)));
-
-        return total;
     }
 
     private static void printHelp()
@@ -176,5 +184,15 @@ public class Tetra
 //        case "--end":
 //        CodeSet.endL = Integer.parseInt(args[++i]);
 //        break;
+//        case "-m":
+//        case "--master":
+//        CodeSet.master = true; // Default behavior
+//        break;
+//        case "-w":
+//        case "--worker":
+//        CodeSet.master = false;
+//        break;
+//        case "-h":
+//        case "--help":
     }
 }

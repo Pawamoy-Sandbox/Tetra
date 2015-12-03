@@ -53,7 +53,8 @@ public class Producer implements Callable<Integer>
         {
             List<BitSet> validS12 = CodeSet.ValidBS12.get(i-1);
 
-            if (codeLength - i == 2)
+            // The following loop does not depend on previous results, therefore it must not be run by workers
+            if (codeLength - i == 2 && CodeSet.master)
             {
                 for (int bs108 = -1; (bs108 = CodeSet.BS108.nextSetBit(bs108 + 1)) != -1; )
                 {
@@ -67,7 +68,8 @@ public class Producer implements Callable<Integer>
                     }
                 }
             }
-            else if (codeLength == i)
+            // The following loop does not depend on previous results, therefore it must not be run by workers
+            else if (codeLength == i && CodeSet.master)
             {
                 for (BitSet bs12 : validS12)
                 {
@@ -125,7 +127,8 @@ public class Producer implements Callable<Integer>
         {
             withoutS12 = "WithoutS12-";
 
-            if (codeLength == 2)
+            // The following loop does not depend on previous results, therefore it must not be run by workers
+            if (codeLength == 2 && CodeSet.master)
             {
                 for (int bit = -1; (bit = CodeSet.BS108.nextSetBit(bit + 1)) != -1; )
                 {
