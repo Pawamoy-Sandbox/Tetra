@@ -40,9 +40,13 @@ public class Tetra
                 case "--worker":
                     CodeSet.master = false;
                     break;
-                case "-v":
+                case "-2":
                 case "--even":
                     CodeSet.evenOnly = true;
+                    break;
+                case "-r":
+                case "--resume":
+                    CodeSet.resume = true;
                     break;
                 case "-h":
                 case "--help":
@@ -66,6 +70,7 @@ public class Tetra
         else
             System.out.println("Output format:    tetra strings");
         System.out.println("Even length only: " + CodeSet.evenOnly);
+        System.out.println("Resume:         " + CodeSet.resume);
         if (CodeSet.master)
             System.out.println("Process status:   master");
         else
@@ -84,6 +89,19 @@ public class Tetra
 
     private static void launchLoop(int start, int end) throws InterruptedException
     {
+        int increment = 1;
+
+        if (CodeSet.evenOnly)
+        {
+            if (start % 2 != 0)
+            {
+                System.err.println("Starting length is not even (incompatible with -2 option)");
+                System.exit(1);
+            }
+
+            increment = 2;
+        }
+
         System.out.print(String.format("%1$18s", "Code length | "));
         System.out.print(String.format("%1$18s", "Valid codes | "));
         System.out.print(String.format("%1$18s", "Execution time |"));
@@ -94,19 +112,6 @@ public class Tetra
         System.out.println();
 
         long startTime = System.currentTimeMillis();
-
-        int increment = 1;
-
-        if (CodeSet.evenOnly)
-        {
-            if (start % 2 != 0)
-            {
-                System.err.println("Starting length is not even");
-                System.exit(1);
-            }
-
-            increment = 2;
-        }
 
         for (int l = start; l <= end; l+=increment)
         {
@@ -164,35 +169,54 @@ public class Tetra
 
     private static void printHelp()
     {
-//        case "-b":
-//        case "--thread-buffer":
-//        CodeSet.threadBuffer = Integer.parseInt(args[++i]);
-//        break;
-//        case "-t":
-//        case "--thread":
-//        CodeSet.thread = Integer.parseInt(args[++i]);
-//        break;
-//        case "-q":
-//        case "--thread-queue":
-//        CodeSet.threadQueue = Integer.parseInt(args[++i]);
-//        break;
-//        case "-s":
-//        case "--start":
-//        CodeSet.startL = Integer.parseInt(args[++i]);
-//        break;
-//        case "-e":
-//        case "--end":
-//        CodeSet.endL = Integer.parseInt(args[++i]);
-//        break;
-//        case "-m":
-//        case "--master":
-//        CodeSet.master = true; // Default behavior
-//        break;
-//        case "-w":
-//        case "--worker":
-//        CodeSet.master = false;
-//        break;
-//        case "-h":
-//        case "--help":
+        System.out.println("usage: java -jar tetra.jar [-t NUM_THREAD] [-q THREAD_QUEUE] [-b THREAD_BUFFER] [-s STARTING_LENGTH] [-e ENDING_LENGTH] [-m | -w] [-2] [-h]");
+        System.out.println();
+        System.out.println("Options:");
+        System.out.println("  -2, --even");
+        System.out.println("    The process will only compute even lengths. It is possible because computation");
+        System.out.println("    of the current length only rely on the three previous even length. In the same way,");
+        System.out.println("    you cannot compute odd lengths only since they rely on the three previous even lengths too.");
+        System.out.println("    Default to " + CodeSet.evenOnly + ".");
+        System.out.println();
+        System.out.println("  -b, --thread-buffer THREAD_BUFFER");
+        System.out.println("    The number of codes each thread will check.");
+        System.out.println("    Default to " + CodeSet.threadBuffer  +".");
+        System.out.println();
+        System.out.println("  -e, --end ENDING_LENGTH");
+        System.out.println("    The desired length to end with (inclusive).");
+        System.out.println("    Default to " + CodeSet.endL  +".");
+        System.out.println();
+        System.out.println("  -h, --help");
+        System.out.println("    Print this help and exit.");
+        System.out.println();
+        System.out.println("  -m, --master");
+        System.out.println("    This option is useful when you split the previous result in several parts,");
+        System.out.println("    in order to launch the computation on several machines. The master process");
+        System.out.println("    will check ALL the codes (depending on previous results or not).");
+        System.out.println("    This is the default behavior, this option is implicit.");
+        System.out.println();
+        System.out.println("  -q, --thread-queue THREAD_QUEUE");
+        System.out.println("    Size of the thread queue.");
+        System.out.println("    With a queue of 6 and 2 active threads, there will be 4 waiting threads in the queue.");
+        System.out.println("    Default to " + CodeSet.threadQueue  +".");
+        System.out.println();
+        System.out.println("  -r, --resume");
+        System.out.println("    The computation will restart at the last valid code computed.");
+        System.out.println("    Default to " + CodeSet.resume + ".");
+        System.out.println();
+        System.out.println("  -s, --start STARTING_LENGTH");
+        System.out.println("    The desired length to start with (inclusive).");
+        System.out.println("    Default to " + CodeSet.startL  +".");
+        System.out.println();
+        System.out.println("  -t, --thread NUM_THREAD");
+        System.out.println("    Number of threads (consumers) that will be active in parallel.");
+        System.out.println("    The active threads are part of the thread queue (not an addition).");
+        System.out.println("    Default to " + CodeSet.thread  +".");
+        System.out.println();
+        System.out.println("  -w, --worker");
+        System.out.println("    This option is useful when you split the previous result in several parts,");
+        System.out.println("    in order to launch the computation on several machines. The worker process");
+        System.out.println("    will check ONLY the codes that depend on previous results. This avoids duplicated");
+        System.out.println("    codes to be computed and written on disk.");
     }
 }

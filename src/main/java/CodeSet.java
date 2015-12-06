@@ -35,6 +35,7 @@ public class CodeSet {
     public static final boolean writeBytesNoTetra = false;
     public static boolean master = true;
     public static boolean evenOnly = false;
+    public static boolean resume = false;
 
     // Singleton Stuff
     private static class SingletonHolder

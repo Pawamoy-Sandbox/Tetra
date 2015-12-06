@@ -48,6 +48,65 @@ public class Producer implements Callable<Integer>
             }
         };
 
+        if (CodeSet.resume)
+        {
+            BitSet lastCode = null;
+
+            File resultDir = new File("Results/L" + (codeLength));
+
+            File[] list = resultDir.listFiles(filter);
+            Arrays.sort(list);
+
+            // Get the last file (last thread output)
+            File lastFile = list[list.length-1];
+
+            // Get the last line, and the line before in case of incompleteness
+            try (BufferedReader br = new BufferedReader(new FileReader(lastFile)))
+            {
+                String line;
+                String lastLine = null;
+
+                // TODO: beforeLastLine not necessary if we implement an interruption handler
+                // that terminates correctly the last threads, and only then, exit
+                String beforeLastLine = null;
+
+                while ((line = br.readLine()) != null)
+                {
+                    if (line.isEmpty())
+                        continue;
+
+                    beforeLastLine = lastLine;
+                    lastLine = line;
+                }
+
+                if (lastLine != null)
+                {
+                    try
+                    {
+                        lastCode = CodeSet.readTetraLine(lastLine, codeLength);
+                    }
+                    catch (IndexOutOfBoundsException e)
+                    {
+                        lastCode = CodeSet.readTetraLine(beforeLastLine, codeLength);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (lastCode != null)
+            {
+                // Determine where we were in the loop based on number of S12 in the code
+                BitSet andS12 = new BitSet();
+                andS12.or(lastCode);
+                andS12.and(CodeSet.BS12);
+
+                int numberOfS12 = andS12.cardinality();
+            }
+        }
+
         // With tetras from S12
         for (int i = BS12_choices; i > 0; i -= 2)
         {
@@ -83,6 +142,10 @@ public class Producer implements Callable<Integer>
                 File resultDir = new File("Results/L" + (codeLength - i));
 
                 File[] list = resultDir.listFiles(filter);
+
+                // NOTE: is this really necessary to sort the array
+                // since each iteration is independent from the previous ones?
+                // BUT! it is mandatory for resuming
                 Arrays.sort(list);
 
                 for (File file : list)
@@ -143,6 +206,9 @@ public class Producer implements Callable<Integer>
                 File resultDir = new File("Results/L" + (codeLength - 2));
 
                 File[] list = resultDir.listFiles(filter);
+                // NOTE: is this really necessary to sort the array
+                // since each iteration is independent from the previous ones?
+                // BUT! it is mandatory for resuming
                 Arrays.sort(list);
 
                 for (File file : list)
