@@ -44,10 +44,11 @@ public class Tetra
                 case "--even":
                     CodeSet.evenOnly = true;
                     break;
-                case "-r":
-                case "--resume":
-                    CodeSet.resume = true;
-                    break;
+                // TODO: work in progress
+//                case "-r":
+//                case "--resume":
+//                    CodeSet.resume = true;
+//                    break;
                 case "-h":
                 case "--help":
                     printHelp();
@@ -70,7 +71,7 @@ public class Tetra
         else
             System.out.println("Output format:    tetra strings");
         System.out.println("Even length only: " + CodeSet.evenOnly);
-        System.out.println("Resume:         " + CodeSet.resume);
+//        System.out.println("Resume:           " + CodeSet.resume);
         if (CodeSet.master)
             System.out.println("Process status:   master");
         else
@@ -200,10 +201,11 @@ public class Tetra
         System.out.println("    With a queue of 6 and 2 active threads, there will be 4 waiting threads in the queue.");
         System.out.println("    Default to " + CodeSet.threadQueue  +".");
         System.out.println();
-        System.out.println("  -r, --resume");
-        System.out.println("    The computation will restart at the last valid code computed.");
-        System.out.println("    Default to " + CodeSet.resume + ".");
-        System.out.println();
+        // TODO: work in progress
+//        System.out.println("  -r, --resume");
+//        System.out.println("    The computation will restart at the last valid code computed.");
+//        System.out.println("    Default to " + CodeSet.resume + ".");
+//        System.out.println();
         System.out.println("  -s, --start STARTING_LENGTH");
         System.out.println("    The desired length to start with (inclusive).");
         System.out.println("    Default to " + CodeSet.startL  +".");

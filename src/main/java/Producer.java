@@ -48,6 +48,7 @@ public class Producer implements Callable<Integer>
             }
         };
 
+        // TODO: work in progress
         if (CodeSet.resume)
         {
             BitSet lastCode = null;
