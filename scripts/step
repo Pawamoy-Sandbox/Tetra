@@ -1,0 +1,8 @@
+#!/bin/bash
+
+seconds_start=$(($1 * 3600 + $2 * 60 + $3))
+seconds_end=$(($4 * 3600 + $5 * 60 + $6))
+
+echo "$seconds_end / $seconds_start" | bc -l
+echo "($seconds_end - $seconds_start) / $seconds_start" | bc -l
+
