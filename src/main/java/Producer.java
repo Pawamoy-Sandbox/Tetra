@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -6,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
-public class Producer implements Callable<Integer>
+public class Producer implements Callable<BigInteger>
 {
     private final ExecutorService consumerExecutor;
     private final CompletionService<Integer> completionService;
@@ -26,7 +27,7 @@ public class Producer implements Callable<Integer>
     }
 
     @Override
-    public Integer call() throws InterruptedException
+    public BigInteger call() throws InterruptedException
     {
         int BS12_choices;
         boolean even = (codeLength % 2 == 0);
@@ -257,18 +258,18 @@ public class Producer implements Callable<Integer>
         }
 
         // Cumulative number of valid codes
-        Integer total = 0;
-        Integer res;
+        BigInteger total = BigInteger.ZERO;
+        BigInteger res;
 
         try
         {
             for (int t = 0; t < numberOfConsumers; t++)
             {
                 // Get result as soon as it comes
-                res = completionService.take().get();
+                res = BigInteger.valueOf(completionService.take().get());
 
                 if (res != null)
-                    total += res;
+                    total = total.add(res);
             }
         }
         catch (InterruptedException | ExecutionException e)

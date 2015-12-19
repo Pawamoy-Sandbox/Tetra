@@ -1,4 +1,5 @@
 import java.io.File;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
@@ -137,11 +138,11 @@ public class Tetra
             CompletionService<Integer> completionService = new ExecutorCompletionService<>(consumer);
 
             ExecutorService producerExecutor = Executors.newSingleThreadExecutor();
-            Callable<Integer> producer = new Producer(completionService, consumer, l);
+            Callable<BigInteger> producer = new Producer(completionService, consumer, l);
 
-            Future<Integer> future = producerExecutor.submit(producer);
+            Future<BigInteger> future = producerExecutor.submit(producer);
 
-            Integer numberOfValidCodes = 0;
+            BigInteger numberOfValidCodes = BigInteger.ZERO;
 
             try
             {
@@ -162,7 +163,7 @@ public class Tetra
 //            BigDecimal total = totalCombinations(l);
 //            float percent = BigDecimal.valueOf(numberOfValidCodes).divide(total, 2, RoundingMode.UP).floatValue() * 100;
 
-            System.out.print(String.format("%1$18s", numberOfValidCodes + " | "));
+            System.out.print(String.format("%1$18s", numberOfValidCodes.toString() + " | "));
 //            System.out.print(String.format("%1$18s", numberOfValidCodes + " (" + (int)percent + "%)" + " | "));
             System.out.println(String.format("%1$18s", new SimpleDateFormat("HH:mm:ss:SSS").format(new Date(elapsedTime-1000*3600)) + " |"));
         }

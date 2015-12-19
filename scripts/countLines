@@ -1,16 +1,12 @@
 #!/bin/bash
 
-find Results/L12 -type f -exec sed -n '$=' \; > ncodel12split
+find Results/L12 -type f -exec sed -n '$=' {} \; > ncodel12split
 git add ncodel12split
 git commit -m "Add ncodel12split file"
 git push
 
-total=0
-while read line; do
-    let total += $line
-done < ncodel12split
+awk '{ sum += $1  } END { print sum  }' ncodel12split > ncodel12
 
-echo $total > ncodel12
 git add ncodel12
 git commit -m "Add ncodel12 file"
 git push
