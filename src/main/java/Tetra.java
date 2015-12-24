@@ -1,14 +1,106 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
 
-public class Tetra
+public class Tetra extends JFrame
 {
-    public static void main (String[] args)
+    public static JTextArea text;
+    private final static String newline = "\n";
+
+    public Tetra()
     {
-        CodeSet.initialize();
+        initUI();
+    }
+
+    private void initUI()
+    {
+        final JButton startButton = new JButton("Start");
+        text = new JTextArea(5, 20);
+        JScrollPane scrollPane = new JScrollPane(text);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        text.setEditable(false);
+
+        Font font = new Font("Courier", Font.PLAIN, 12);
+        text.setFont(font);
+
+        text.append("Threads:          " + CodeSet.thread + " active / " + CodeSet.threadQueue + " queued" + newline);
+        text.append("Threads buffer:   " + CodeSet.threadBuffer + newline);
+        if (CodeSet.startL == CodeSet.endL)
+            text.append("Computed length:  " + CodeSet.startL + newline);
+        else
+            text.append("Computed length:  " + CodeSet.startL + " to " + CodeSet.endL + newline);
+        if (CodeSet.writeBytesNoTetra)
+            text.append("Output format:    tetra indexes" + newline);
+        else
+            text.append("Output format:    tetra strings" + newline);
+        text.append("Even length only: " + CodeSet.evenOnly);
+        if (CodeSet.master)
+            text.append("Process status:   master" + newline);
+        else
+            text.append("Process status:   worker" + newline);
+        text.append(newline);
+
+        startButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent event)
+            {
+                startButton.setEnabled(false);
+
+                new Thread()
+                {
+                    @Override
+                    public void run()
+                    {
+                        CodeSet.initialize();
+
+                        try
+                        {
+                            launchLoop(CodeSet.startL, CodeSet.endL);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
+        });
+
+        createLayout(startButton, scrollPane);
+        setTitle("Tetra");
+        setSize(500, 200);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void createLayout(JComponent jc1, JComponent jc2)
+    {
+        Container pane = getContentPane();
+        GroupLayout gl = new GroupLayout(pane);
+        pane.setLayout(gl);
+
+        gl.setAutoCreateContainerGaps(true);
+        gl.setHorizontalGroup(gl.createSequentialGroup().addComponent(jc1).addComponent(jc2));
+        gl.setVerticalGroup(gl.createSequentialGroup().addComponent(jc1).addComponent(jc2));
+    }
+
+    public static void main(String[] args)
+    {
+
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Tetra ex = new Tetra();
+                ex.setVisible(true);
+            }
+        });
 
         for (int i = 0; i < args.length; i++)
         {
@@ -78,15 +170,6 @@ public class Tetra
         else
             System.out.println("Process status:   worker");
         System.out.println();
-
-        try
-        {
-            launchLoop(CodeSet.startL, CodeSet.endL);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     private static void launchLoop(int start, int end) throws InterruptedException
@@ -113,12 +196,23 @@ public class Tetra
         System.out.print("-----------------|");
         System.out.println();
 
+        text.append(String.format("%1$18s", "Code length | "));
+        text.append(String.format("%1$18s", "Valid codes | "));
+        text.append(String.format("%1$18s", "Execution time |"));
+        text.append(newline);
+        text.append("----------------|-");
+        text.append("----------------|-");
+        text.append("-----------------|");
+        text.append(newline);
+
         long startTime = System.currentTimeMillis();
 
         for (int l = start; l <= end; l+=increment)
         {
             System.out.print(String.format("%1$18s", l + " | "));
             System.out.flush();
+
+            text.append(String.format("%1$18s", l + " | "));
 
             File LDir = new File("Results/L" + l);
             LDir.mkdirs();
@@ -166,6 +260,11 @@ public class Tetra
             System.out.print(String.format("%1$18s", numberOfValidCodes.toString() + " | "));
 //            System.out.print(String.format("%1$18s", numberOfValidCodes + " (" + (int)percent + "%)" + " | "));
             System.out.println(String.format("%1$18s", new SimpleDateFormat("HH:mm:ss:SSS").format(new Date(elapsedTime-1000*3600)) + " |"));
+
+            text.append(String.format("%1$18s", numberOfValidCodes.toString() + " | "));
+//            System.out.print(String.format("%1$18s", numberOfValidCodes + " (" + (int)percent + "%)" + " | "));
+            text.append(String.format("%1$18s", new SimpleDateFormat("HH:mm:ss:SSS").format(new Date(elapsedTime-1000*3600)) + " |"));
+            text.append(newline);
         }
     }
 
